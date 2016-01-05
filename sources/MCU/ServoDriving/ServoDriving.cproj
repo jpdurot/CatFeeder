@@ -76,6 +76,7 @@
         </avrgcc.linker.libraries.Libraries>
       </AvrGcc>
     </ToolchainSettings>
+    <PostBuildEvent>"$(MSBuildProjectDirectory)\burn.bat"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
@@ -122,12 +123,6 @@
     <Compile Include="usitwislave.h">
       <SubType>compile</SubType>
     </Compile>
-    <None Include="USI_TWI_Slave.c">
-      <SubType>compile</SubType>
-    </None>
-    <None Include="USI_TWI_Slave.h">
-      <SubType>compile</SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>
