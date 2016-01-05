@@ -30,3 +30,10 @@
 
 # Debug files
 *.dSYM/
+
+# User files
+*.atsuo
+
+# Debug and Release directories
+**/Debug/*.*
+**/Release/*.*
