@@ -93,6 +93,62 @@ void setup()
 	
 }
 
+typedef void(*messageHandler)(const message msg);
+
+typedef struct 
+{
+	char id;
+	uint8_t expectedSize;
+	messageHandler handler;
+} messageHandlingInfo;
+
+void handlerGetTime(const message msg)
+{
+	// Get time command
+	char timeBuffer[9];
+	time currentTime;
+	get_time(&currentTime);
+	get_time_string(timeBuffer, &currentTime);
+	serial_writeString("Get time : ");
+	serial_writeString(timeBuffer);
+	serial_writeString("\r\n");
+}
+
+void handlerSetTime(const message msg)
+{
+	char hours = (msg.data[1] - '0') * 10;
+	hours = hours + (msg.data[2] - '0');
+	char minutes = (msg.data[3] - '0') * 10;
+	minutes = minutes + (msg.data[4] - '0');
+	char seconds = (msg.data[5] - '0') * 10;
+	seconds = seconds + (msg.data[6] - '0');
+	time t;
+	t.hours = hours;
+	t.minutes = minutes;
+	t.seconds = seconds;
+	rtc_setTime(t);
+	time currentTime;
+	rtc_getTime(&currentTime);
+	set_time(currentTime.hours, currentTime.minutes, currentTime.seconds);
+	serial_writeString("Set time OK\r\n");
+}
+
+void handlerFeed(const message msg)
+{
+	if (writeRegister(0x20,0, 0x02) == RTC_OK) // Feed !
+	{
+		serial_writeString("Miam Kyou & Yoshi !!! \r\n");
+	}
+}
+
+#define MESSAGE_HANDLERS_COUNT 3
+
+messageHandlingInfo messageHandlers[MESSAGE_HANDLERS_COUNT] = {
+	{ .id = 'T', .expectedSize = 0, .handler = handlerGetTime},
+	{ .id = 'S', .expectedSize = 6, .handler = handlerSetTime},
+	{ .id = 'F', .expectedSize = 0, .handler = handlerFeed}
+};
+
 
 
 void loop()
@@ -103,81 +159,51 @@ void loop()
 	alarm a;
 	if (currentTime.seconds != lastSecond)
 	{
-		//get_time_string(timeBuffer);
-		//serial_writeString(timeBuffer);
-		// Display time
-		//sprintf(buffer, "%02d:%02d:%02d", currentTime.hours, currentTime.minutes, currentTime.seconds);
-		//reset_cursor();
-		//write_string(get_time_string());
 		lastSecond = currentTime.seconds;
 		if (isAlarmRaised())
 		{
-			//set_position(1,0);
-			//write_string("Feeding...");
 			serial_writeString("Feed time !!!\r\n");
-			acknowledge_alarm();
-			/*PORTC |= (1<<PORTC3);
-			_delay_ms(2000);
-			PORTC &= ~(1<<PORTC3);*/
-			
-			
-			
+			acknowledge_alarm();	
 		}
 	}
 	
 	// Handle communication
 	if (message_available())
 	{
+		serial_writeString("Message received\r\n");
 		message msg;
 		message_get(&msg);
-		if (!msg.size)
+		if (msg.size > 0)
 		{
-			serial_writeString("Empty message\r\n");
-		}
-		char action = msg.data[0];
-		if (action == 'T')
-		{
-			// Get time command
-			get_time_string(timeBuffer, &currentTime);
-			serial_writeString("Get time : ");
-			serial_writeString(timeBuffer);
-			serial_writeString("\r\n");
-		}
-		else if (action == 'S')
-		{
-			if (msg.size == 7)
+			// Check if a handler exists
+			uint8_t isHandled = 0;
+			for (int i=0 ; i <MESSAGE_HANDLERS_COUNT;i++)
 			{
-				char hours = (msg.data[1] - '0') * 10;
-				hours = hours + (msg.data[2] - '0');
-				char minutes = (msg.data[3] - '0') * 10;
-				minutes = minutes + (msg.data[4] - '0');
-				char seconds = (msg.data[5] - '0') * 10;
-				seconds = seconds + (msg.data[6] - '0');
-				time t;
-				t.hours = hours;
-				t.minutes = minutes;
-				t.seconds = seconds;
-				rtc_setTime(t);
-				time current_time;
-				rtc_getTime(&current_time);
-				set_time(current_time.hours, current_time.minutes, current_time.seconds);
-				serial_writeString("Set time OK\r\n");
+				if ( messageHandlers[i].id == msg.data[0])
+				{
+					isHandled = 1;
+					// Check expected size
+					if (((msg.size -1) == messageHandlers[i].expectedSize) || (messageHandlers[i].expectedSize == 0xff))
+					{
+						serial_writeString("Message handled\r\n");
+						messageHandlers[i].handler(msg);
+					}
+					else
+					{
+						serial_writeString("Wrong message size\r\n");
+					}
+					break;
+				}
 			}
-			else
+			if (!isHandled)
 			{
-				serial_writeString("Set time : Wrong message size\r\n");
+				serial_writeString("Unknown action\r\n");
 			}
 		}
-		else if (action == 'F')
+
+		/*else if (action == 'F')
 		{
 			
-			//PORTB |= (1<<PORTB1);
-			//_delay_ms(1000);
-			//PORTB &= ~(1<<PORTB1);
-			if (writeRegister(0x20,0, 0x02) == RTC_OK) // Feed !
-			{
-				serial_writeString("Miam Kyou & Yoshi !!! \r\n");
-			}
 			
 		}
 		else if (action == '1')
@@ -433,6 +459,7 @@ void loop()
 		{
 			serial_writeString("Unknown action\r\n");
 		}
+		*/
 	}
 }
 
