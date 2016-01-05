@@ -35,5 +35,12 @@
 *.atsuo
 
 # Debug and Release directories
-**/Debug/*.*
-**/Release/*.*
+*/Debug/*
+*/Release/*
+
+# Node modules
+sources/mobile/node_modules/*
+
+# Cordova build directories
+*/platforms/android/www/*
+*/platforms/browser/www/*
