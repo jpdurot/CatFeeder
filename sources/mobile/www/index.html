@@ -43,19 +43,21 @@
                 <p class="event received">Device is Ready</p>
             </div>
         </div>-->
-        <catfeeder>Loading...</catfeeder>
+        <app>Loading...</app>
         <script type="text/javascript" src="cordova.js"></script>
         <script src="vendor/angular2/bundles/angular2-polyfills.js"></script>
         <script src="vendor/systemjs/dist/system.src.js"></script>
         <script src="vendor/rxjs/bundles/Rx.js"></script>
         <script src="vendor/angular2/bundles/angular2.dev.js"></script>
+        <script src="vendor/angular2/bundles/router.dev.js"></script>
         <script>
             System.config({
+                //baseURL : '/app'
                 packages: {        
-                app: {
-                    format: 'register',
-                    defaultExtension: 'js'
-                }
+                    app: {
+                        format: 'register',
+                        defaultExtension: 'js'
+                    }
                 }
             });
             System.import('app/boot')
