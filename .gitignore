@@ -44,3 +44,6 @@ sources/mobile/node_modules/*
 # Cordova build directories
 */platforms/android/www/*
 */platforms/browser/www/*
+
+#Javascript source maps
+*/*.js.map
