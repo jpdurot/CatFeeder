@@ -46,4 +46,5 @@ sources/mobile/node_modules/*
 */platforms/browser/www/*
 
 #Javascript source maps
-*/*.js.map
+www/app/**/*.js.map
+www/app/**/*.js
