@@ -8,7 +8,7 @@ import {Component, View} from 'angular2/core';
 
 @View(
     {
-        templateUrl: 'home.html'
+        templateUrl: 'app/components/home/home.html'
     }
 )
 
