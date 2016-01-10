@@ -3,8 +3,7 @@ var gulp = require('gulp'),
     notify = require("gulp-notify"),
     bower = require('gulp-bower'),
     ts = require('gulp-typescript'),
-    run = require('gulp-run'),
-    debug = require('gulp-debug');;
+    run = require('gulp-run');
     
 var config = {
     baseDir: './www',
@@ -48,7 +47,6 @@ gulp.task('css', function() {
 
 gulp.task('typescript', function() {
 	return gulp.src(config.baseDir + '/app/**/*.ts')
-        .pipe(debug({title: 'ts files:'}))
 		.pipe(ts(tsProject))
         .pipe(gulp.dest(config.baseDir + '/app'));
 });
