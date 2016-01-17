@@ -13,7 +13,7 @@
     "strip-sourcemap-loader": "0.0.1",
     "typescript": "^1.7.3"
   },
-  "name": "Cat Feeder",
+  "name": "CatFeeder",
   "description": "Cat Feeder hybrid application",
   "cordovaPlugins": [],
   "cordovaPlatforms": [

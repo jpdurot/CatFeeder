@@ -40,11 +40,9 @@
 
 # Node modules
 sources/mobile/node_modules/*
-
-# Cordova build directories
-*/platforms/android/www/*
-*/platforms/browser/www/*
-
-#Javascript source maps
-www/app/**/*.js.map
-www/app/**/*.js
+sources/mobile/www/build/
+sources/mobile/platforms/
+sources/mobile/plugins/
+sources/mobile/*.swp
+sources/mobile/.DS_Store
+sources/mobile/Thumbs.db

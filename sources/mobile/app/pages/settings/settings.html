@@ -1,16 +1,12 @@
-<ion-navbar *navbar>
-  
-  <ion-title>Settings</ion-title>
-  <ion-buttons begin>
-    <button (click)='openSettings()'>
-        <ion-icon name='back'></ion-icon>
-    </button>
-  </ion-buttons>
+<ion-navbar *navbar primary>
+  <ion-title >Settings</ion-title>
 </ion-navbar>
 
 
-<ion-content padding>
-
-  <h3>Settings page</h3>
-
+<ion-content>
+    <ion-list>
+        <button ion-item (click)="selectDevice()">
+        Bluetooth device
+    </button>
+    </ion-list>
 </ion-content>
