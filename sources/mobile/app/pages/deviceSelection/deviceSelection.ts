@@ -28,7 +28,7 @@ export class DeviceSelectionPage {
           {name: "dev1"},
           {name: "dev2"}
       ];*/
-      bluetoothSerial.list(this.onDevicesListReceived, this.onDevicesListError);
+      bluetoothSerial.list((data) => this.devices = data, (error) => alert(error));
       //this.devices.push({name : "device1"});
       //this.devices.push({name : "device2"});
   }
