@@ -10,8 +10,39 @@
 </ion-navbar>
 
 
-<ion-content padding class="getting-started">
+<ion-content>
 
-  <h3>Cat Feeder main screen</h3>
+  <ion-card>
+      <ion-card-header green>
+    <h2 primary>CatFeeder status</h2>
+  </ion-card-header>
+
+  <ion-card-content>
+      <ion-item>
+          <h3>Connection</h3>
+          <ion-icon item-right heart primary></ion-icon>
+      </ion-item>
+      <ion-item>
+          <h3>Current state</h3>
+          <p item-right>{{bluetoothInfo.status}}</p>
+      </ion-item>
+      <ion-item>
+          <h3>Device name</h3>
+          <p item-right>{{bluetoothInfo.deviceName}}</p>
+      </ion-item>
+  </ion-card-content>
+      </ion-card>
+      
+      
+      <ion-card>
+      <ion-card-header>
+    Actions
+  </ion-card-header>
+
+  <ion-card-content>
+      <button error>Feed the cats</button>
+  </ion-card-content>
+      </ion-card>
+
 
 </ion-content>
