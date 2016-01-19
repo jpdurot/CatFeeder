@@ -35,7 +35,7 @@ export class BluetoothService
             BluetoothService.bluetoothStatus = 
             {
                 status: BluetoothConnectionStatus.NotConnected,
-                deviceName:'Test'
+                deviceName:''
             }
         }
     }
