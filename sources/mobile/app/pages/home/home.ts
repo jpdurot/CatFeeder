@@ -1,11 +1,13 @@
 import {Page, NavController, Alert} from 'ionic-framework/ionic';
 
 import {SettingsPage} from '../settings/settings';
+import {BluetoothStatusToString} from '../../utils/bluetoothStatusToStringPipe';
 
 import {BluetoothService, IBluetoothStatus, IBluetoothDevice} from '../../services/bluetoothService';
 
 @Page({
-  templateUrl: 'build/pages/home/home.html'
+  templateUrl: 'build/pages/home/home.html',
+  pipes: [BluetoothStatusToString]
 })
 export class HomePage {
     private nav: NavController;
@@ -23,11 +25,11 @@ export class HomePage {
         {
             let alert = Alert.create({
                 title: 'Bluetooth',
-                subTitle: 'Unable to connect',
+                subTitle: 'Unable to connect: ' + error,
                 buttons: ['Dismiss']
             });
             this.nav.present(alert);
-        }
+        });
   }
   
   openSettings()

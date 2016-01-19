@@ -1,4 +1,6 @@
-import {Page, ViewController, NavController} from 'ionic-framework/ionic';
+import {Alert, Page, ViewController, NavController} from 'ionic-framework/ionic';
+
+import {BluetoothService, IBluetoothDevice} from '../../services/bluetoothService';
 
 @Page({
   templateUrl: 'build/pages/deviceSelection/deviceSelection.html'
@@ -8,13 +10,13 @@ export class DeviceSelectionPage {
     private viewController: ViewController;
     private nav:NavController;
     private isLoading:boolean;
+    private bluetoothService:BluetoothService;
     devices:any;
   
   
   constructor(viewController: ViewController) {
-  //constructor(nav: NavController) {
     this.viewController = viewController;
-    //this.nav = nav;
+    this.bluetoothService = new BluetoothService();
     this.isLoading = false;
     this.devices = [];
     this.getBluetoothDevices();
@@ -28,9 +30,17 @@ export class DeviceSelectionPage {
           {name: "dev1"},
           {name: "dev2"}
       ];*/
-      bluetoothSerial.list((data) => this.devices = data, (error) => alert(error));
-      //this.devices.push({name : "device1"});
-      //this.devices.push({name : "device2"});
+      this.bluetoothService.getDeviceList().then(
+          (list) => this.devices = list,
+          (error) => 
+          {
+            let alert = Alert.create({
+                title: 'Bluetooth',
+                subTitle: error,
+                buttons: ['Dismiss']
+            });
+            this.nav.present(alert);
+        });
   }
   
   onDevicesListReceived(data:any)
