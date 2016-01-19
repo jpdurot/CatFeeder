@@ -1,29 +1,35 @@
 import {Page, NavController, Modal} from 'ionic-framework/ionic';
 import {DeviceSelectionPage} from '../deviceSelection/deviceSelection';
+import {IBluetoothDevice} from '../../services/bluetoothService';
+import {StorageService, ISettings} from '../../services/storageService';
 
 @Page({
   templateUrl: 'build/pages/settings/settings.html'
 })
 export class SettingsPage {
     private nav: NavController;
-    devices:any;
+    private storage:StorageService;
+    private settings:ISettings;
+    private currentBlue
+    
   constructor(nav: NavController) {
     this.nav = nav;
-    this.devices = [
-        {
-            "name": "device1"
-        },
-        {
-            "name": "device2"
-        }
-    ]
+    this.storage = new StorageService();
+    this.settings = this.storage.getSettings();
   }
   
   selectDevice(device:any)
   {
-      //this.nav.push(DeviceSelectionPage);
       let modal = Modal.create(DeviceSelectionPage);
-      modal.onDismiss(data => console.log(data));
+      modal.onDismiss(
+          data => 
+          {
+              if (data !== null)
+              {
+                  this.settings.bluetoothDeviceName = (<IBluetoothDevice>data).name;
+                  this.storage.updateSettings(this.settings);
+              }
+          });
       this.nav.present(modal);
   }
 }

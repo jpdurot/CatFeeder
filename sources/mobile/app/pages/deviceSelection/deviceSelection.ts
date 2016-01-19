@@ -26,10 +26,6 @@ export class DeviceSelectionPage {
   {
       this.devices = [];
       this.isLoading = true;
-      /*this.devices= [
-          {name: "dev1"},
-          {name: "dev2"}
-      ];*/
       this.bluetoothService.getDeviceList().then(
           (list) => this.devices = list,
           (error) => 
