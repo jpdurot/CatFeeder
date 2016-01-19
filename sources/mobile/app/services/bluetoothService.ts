@@ -99,7 +99,8 @@ export class BluetoothService
                         }    
                         else
                         {
-                            console.debug("Device found :" + device);
+                            console.debug("Device found :");
+                            console.dir(device);
                             this.connectInternal(device.address).then(
                                 (result) => 
                                 {
