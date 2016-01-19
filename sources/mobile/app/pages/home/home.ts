@@ -17,26 +17,25 @@ export class HomePage {
     private storage: StorageService;
     private settings:ISettings;
     private bluetoothInfo: Bluetooth.IBluetoothStatus;
-    private isAlert:boolean;
     
   constructor(nav: NavController) {
     this.nav = nav;
     this.bluetoothService = new Bluetooth.BluetoothService();
     this.storage = new StorageService();
-    this.settings = this.storage.getSettings();
+    
     this.bluetoothInfo = this.bluetoothService.getStatus();
     
   }
   
   onPageWillEnter()
   {
+      this.settings = this.storage.getSettings();
     if (this.settings.bluetoothDeviceName !== null
-        && !this.isAlert)
-    //     && this.bluetoothInfo.deviceName !== this.settings.bluetoothDeviceName
-    //     && this.bluetoothInfo.status !== Bluetooth.BluetoothConnectionStatus.Connected)
+        && this.bluetoothInfo.deviceName !== this.settings.bluetoothDeviceName
+         && this.bluetoothInfo.status != Bluetooth.BluetoothConnectionStatus.Connected)
     {
         this.bluetoothService.connect(this.settings.bluetoothDeviceName).then(
-            (result) => {this.isAlert = false;},
+            (result) => {},
             (error)=>
             {
                 let alert = Alert.create({
@@ -44,7 +43,6 @@ export class HomePage {
                     subTitle: 'Unable to connect: ' + error,
                     buttons: ['Dismiss']
                 });
-                this.isAlert = false;
                 this.nav.present(alert);
             });
       }
