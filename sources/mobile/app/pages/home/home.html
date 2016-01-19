@@ -24,7 +24,7 @@
       </ion-item>
       <ion-item>
           <h3>Current state</h3>
-          <p item-right>{{bluetoothInfo.status}}</p>
+          <p item-right>{{bluetoothInfo.status | btStatusToString}}</p>
       </ion-item>
       <ion-item>
           <h3>Device name</h3>
