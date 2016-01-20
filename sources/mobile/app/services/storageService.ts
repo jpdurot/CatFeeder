@@ -1,8 +1,11 @@
+import {Injectable} from 'angular2/core';
+
 export interface ISettings
 {
     bluetoothDeviceName:string;
 }
 
+@Injectable()
 export class StorageService
 {
     private SettingsKey:string = "globalSettings";

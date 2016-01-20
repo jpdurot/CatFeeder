@@ -1,4 +1,6 @@
-import * as Bluetooth from './bluetoothService';
+import {Injectable} from 'angular2/core';
+
+import {BluetoothService} from './bluetoothService';
 
 import {SimpleEvent, ISimpleEvent} from '../utils/events';
 
@@ -10,6 +12,7 @@ export interface IMessage
 
 enum MessageStatus {StartTokenExpected = 1, EscapeTokenReceived = 2, DataExpected = 3}
 
+@Injectable()
 export class MessagingService
 {
     private MessageBeginToken:number = 0x41;
@@ -21,11 +24,11 @@ export class MessagingService
     
     private messageData: Uint8Array;
 
-    private btService:Bluetooth.BluetoothService;
+    private btService:BluetoothService;
     
     public get messageReceived(): ISimpleEvent<IMessage> { return this.onMessageReceived ;}
     
-    constructor(bluetoothService:Bluetooth.BluetoothService)
+    constructor(bluetoothService:BluetoothService)
     {
         this.onMessageReceived = new SimpleEvent<IMessage>();
         this.btService = bluetoothService;
