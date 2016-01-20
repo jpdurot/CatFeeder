@@ -53,6 +53,16 @@ export class BluetoothService
         return this.bluetoothStatus;
     }
     
+    sendRaw(data: Uint8Array):Promise<void>
+    {
+        return new Promise<void>(
+            function (resolve, reject)
+            {
+                bluetoothSerial.sendRaw(data, resolve, reject);
+            }
+        );
+    }
+    
     getDeviceList():Promise<Array<IBluetoothDevice>>
     {
         if (this.listDevicesPromise == null)

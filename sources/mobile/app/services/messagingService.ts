@@ -37,10 +37,35 @@ export class MessagingService
         this.resetMessage();
     }
     
+    sendFeedCatsMessage():Promise<void>
+    {
+        return new Promise<void>(
+            function(resolve, reject)
+            {
+                this.btService.sendRaw(this.buildMessage([0x46]))
+                .then(
+                    () => resolve(),
+                    () => reject()
+                );
+            }
+        );
+    }
+    
+    private buildMessage(payload:Uint8Array): Uint8Array
+    {
+        // TODO : escape tokens
+        let message: Uint8Array = new Uint8Array(payload);
+        message.set(0, this.MessageBeginToken);
+        message.set(message.length, this.MessageEndToken);
+        return message;
+    }
+    
     private resetMessage()
     {
         this.messageStatus = MessageStatus.StartTokenExpected;
     }
+    
+    
     
     private dataReceivedHandler(data:Uint8Array)
     {
