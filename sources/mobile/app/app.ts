@@ -2,8 +2,13 @@ import {App, IonicApp, Platform, Page} from 'ionic-framework/ionic';
 
 import {HomePage} from './pages/home/home';
 
+import {BluetoothService} from "./services/bluetoothService";
+import {MessagingService} from "./services/messagingService";
+import {StorageService} from "./services/storageService";
+
 @App({
-  templateUrl: 'build/app.html'
+  templateUrl: 'build/app.html',
+  providers: [BluetoothService, MessagingService, StorageService]
 })
 
 class MyApp {

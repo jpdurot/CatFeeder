@@ -1,20 +1,19 @@
 import {Page, NavController, Modal} from 'ionic-framework/ionic';
 import {DeviceSelectionPage} from '../deviceSelection/deviceSelection';
 import {IBluetoothDevice} from '../../services/bluetoothService';
-import {StorageService, ISettings} from '../../services/storageService';
+import * as Storage from '../../services/storageService';
 
 @Page({
   templateUrl: 'build/pages/settings/settings.html'
 })
 export class SettingsPage {
     private nav: NavController;
-    private storage:StorageService;
-    private settings:ISettings;
-    private currentBlue
+    private storage:Storage.StorageService;
+    private settings:Storage.ISettings;
     
-  constructor(nav: NavController) {
+  constructor(nav: NavController, storage: Storage.StorageService) {
     this.nav = nav;
-    this.storage = new StorageService();
+    this.storage = storage;
     this.settings = this.storage.getSettings();
   }
   

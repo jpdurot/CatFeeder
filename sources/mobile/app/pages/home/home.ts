@@ -18,10 +18,11 @@ export class HomePage {
     private settings:Storage.ISettings;
     private bluetoothInfo: Bluetooth.IBluetoothStatus;
     
-  constructor(nav: NavController) {
+  constructor(nav: NavController, bluetooth: Bluetooth.BluetoothService, storage: Storage.StorageService) {
     this.nav = nav;
-    this.bluetoothService = new Bluetooth.BluetoothService();
-    this.storage = new Storage.StorageService();
+    //this.bluetoothService = new Bluetooth.BluetoothService();
+    this.bluetoothService = bluetooth;
+    this.storage = storage;
     
     this.bluetoothInfo = this.bluetoothService.getStatus();
     

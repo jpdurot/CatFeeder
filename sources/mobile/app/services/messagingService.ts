@@ -16,19 +16,19 @@ export class MessagingService
     private MessageEndToken:number = 0x5a;
     private MessageEscapeToken:number = 0x40;
     
-    private btService:Bluetooth.BluetoothService;
     private onMessageReceived:SimpleEvent<IMessage>;
     private messageStatus: MessageStatus;
     
     private messageData: Uint8Array;
+
+    private btService:Bluetooth.BluetoothService;
     
     public get messageReceived(): ISimpleEvent<IMessage> { return this.onMessageReceived ;}
     
-    
-    constructor()
+    constructor(bluetoothService:Bluetooth.BluetoothService)
     {
         this.onMessageReceived = new SimpleEvent<IMessage>();
-        this.btService = new Bluetooth.BluetoothService();
+        this.btService = bluetoothService;
         this.btService.dataReceived.on(this.dataReceivedHandler.bind(this));
         this.messageData = new Uint8Array(0);
         this.resetMessage();

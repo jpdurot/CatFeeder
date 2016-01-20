@@ -1,4 +1,4 @@
-import {bind, Injectable} from 'angular2/core';
+import {Injectable} from 'angular2/core';
 
 import {Array} from '../utils/array';
 
@@ -26,73 +26,70 @@ export interface IBluetoothStatus
 @Injectable()
 export class BluetoothService
 {
-    private static isInitialized:boolean;
-    private static connectPromise:Promise<boolean>;
-    private static listDevicesPromise:Promise<Array<IBluetoothDevice>>;
-    private static bluetoothStatus:IBluetoothStatus;
-    private static onDataReceived:Events.SimpleEvent<Uint8Array>;
+    private isInitialized:boolean;
+    private connectPromise:Promise<boolean>;
+    private listDevicesPromise:Promise<Array<IBluetoothDevice>>;
+    private bluetoothStatus:IBluetoothStatus;
+    private onDataReceived:Events.SimpleEvent<Uint8Array>;
     
-    public get dataReceived(): Events.SimpleEvent<Uint8Array> {return BluetoothService.onDataReceived;}
+    public get dataReceived(): Events.SimpleEvent<Uint8Array> {return this.onDataReceived;}
     
     constructor()
     {
-        if (!BluetoothService.isInitialized)
+        this.bluetoothStatus = 
         {
-            BluetoothService.bluetoothStatus = 
-            {
-                status: BluetoothConnectionStatus.NotConnected,
-                deviceName:''
-            }
-            BluetoothService.onDataReceived = new Events.SimpleEvent<Uint8Array>();
-            bluetoothSerial.subscribeRawData(
-                (data) => BluetoothService.onDataReceived.trigger(new Uint8Array(data)),
-                (error) => console.log("Error during data reception : " + error)
-            );
+            status: BluetoothConnectionStatus.NotConnected,
+            deviceName:''
         }
+        this.onDataReceived = new Events.SimpleEvent<Uint8Array>();
+        bluetoothSerial.subscribeRawData(
+            (data) => this.onDataReceived.trigger(new Uint8Array(data)),
+            (error) => console.log("Error during data reception : " + error)
+        );
     }
     
     getStatus():IBluetoothStatus
     {
-        return BluetoothService.bluetoothStatus;
+        return this.bluetoothStatus;
     }
     
     getDeviceList():Promise<Array<IBluetoothDevice>>
     {
-        if (BluetoothService.listDevicesPromise == null)
+        if (this.listDevicesPromise == null)
         {
-            BluetoothService.listDevicesPromise = new Promise<Array<IBluetoothDevice>>(
+            this.listDevicesPromise = new Promise<Array<IBluetoothDevice>>(
             function(resolve, reject)
             {
                 bluetoothSerial.list(
                     (result) => 
                     { 
                         resolve(result);
-                        BluetoothService.listDevicesPromise = null;
+                        this.listDevicesPromise = null;
                     },
                     (error) => 
                     {
                         console.error(error);
                         reject(error);
-                        BluetoothService.listDevicesPromise = null;
+                        this.listDevicesPromise = null;
                     }
                 );
             });
         }
-        return BluetoothService.listDevicesPromise;
+        return this.listDevicesPromise;
         
     }
     connect(deviceName:string):Promise<boolean>
     {
-        BluetoothService.bluetoothStatus.deviceName = deviceName;
-        BluetoothService.bluetoothStatus.status = BluetoothConnectionStatus.Connecting;
+        this.bluetoothStatus.deviceName = deviceName;
+        this.bluetoothStatus.status = BluetoothConnectionStatus.Connecting;
         console.debug("Connecting to "+ deviceName + "...");
-        if (BluetoothService.connectPromise != null && BluetoothService.bluetoothStatus.deviceName == deviceName)
+        if (this.connectPromise != null && this.bluetoothStatus.deviceName == deviceName)
         {
             console.debug("Already connecting");
-            return BluetoothService.connectPromise;
+            return this.connectPromise;
         }
         // Get devices and find MAC address corresponding to deviceName
-        BluetoothService.connectPromise = new Promise<boolean>(
+        this.connectPromise = new Promise<boolean>(
             (resolve, reject) =>
             {
                 this.getDeviceList().then(
@@ -102,11 +99,11 @@ export class BluetoothService
                         if (device == null)
                         {
                             console.debug("No device corresponding to name "+ deviceName);
-                            BluetoothService.bluetoothStatus.status = BluetoothConnectionStatus.NotConnected;
+                            this.bluetoothStatus.status = BluetoothConnectionStatus.NotConnected;
                             let error = "Device not found";
                             console.error(error);
                             reject(error);
-                            BluetoothService.connectPromise = null;
+                            this.connectPromise = null;
                         }    
                         else
                         {
@@ -115,36 +112,36 @@ export class BluetoothService
                             this.connectInternal(device.address).then(
                                 (result) => 
                                 {
-                                    BluetoothService.bluetoothStatus.status = (result ? BluetoothConnectionStatus.Connected : BluetoothConnectionStatus.NotConnected);
+                                    this.bluetoothStatus.status = (result ? BluetoothConnectionStatus.Connected : BluetoothConnectionStatus.NotConnected);
                                     resolve(result);
-                                    BluetoothService.connectPromise = null;
+                                    this.connectPromise = null;
                                 },
                                 (error) => 
                                 {
-                                    BluetoothService.bluetoothStatus.status = BluetoothConnectionStatus.NotConnected;
+                                    this.bluetoothStatus.status = BluetoothConnectionStatus.NotConnected;
                                     console.error(error);
                                     reject(error);
-                                    BluetoothService.connectPromise = null;
+                                    this.connectPromise = null;
                                 }
                             )
                         }
                     },
                     (error) => 
                     {
-                        BluetoothService.bluetoothStatus.status = BluetoothConnectionStatus.NotConnected;
+                        this.bluetoothStatus.status = BluetoothConnectionStatus.NotConnected;
                         console.error(error);
                         reject(error);
-                        BluetoothService.connectPromise = null;
+                        this.connectPromise = null;
                     }
                 );
             });
-            return BluetoothService.connectPromise;
+            return this.connectPromise;
     }
     
     private connectInternal(macAddress:string):Promise<boolean>
     {
         console.debug("Connecting (internal) to address " + macAddress + "...");
-        BluetoothService.connectPromise = new Promise<boolean>(
+        this.connectPromise = new Promise<boolean>(
             function(resolve, reject)
             {
                 bluetoothSerial.connect(
@@ -155,12 +152,6 @@ export class BluetoothService
                 );
             }
         )
-        return BluetoothService.connectPromise;
+        return this.connectPromise;
     }
-    
 }
-
-export const todoInjectables = [
-  bind(BluetoothService).toClass(BluetoothService),
-  bind('BluetoothService').toAlias(BluetoothService)
-];
