@@ -2,6 +2,8 @@ import {bind, Injectable} from 'angular2/core';
 
 import {Array} from '../utils/array';
 
+import * as Events from '../utils/events';
+
 
 export interface IBluetoothDevice
 {
@@ -28,6 +30,10 @@ export class BluetoothService
     private static connectPromise:Promise<boolean>;
     private static listDevicesPromise:Promise<Array<IBluetoothDevice>>;
     private static bluetoothStatus:IBluetoothStatus;
+    private static onDataReceived:Events.SimpleEvent<Uint8Array>;
+    
+    public get dataReceived(): Events.SimpleEvent<Uint8Array> {return BluetoothService.onDataReceived;}
+    
     constructor()
     {
         if (!BluetoothService.isInitialized)
@@ -37,6 +43,11 @@ export class BluetoothService
                 status: BluetoothConnectionStatus.NotConnected,
                 deviceName:''
             }
+            BluetoothService.onDataReceived = new Events.SimpleEvent<Uint8Array>();
+            bluetoothSerial.subscribeRawData(
+                (data) => BluetoothService.onDataReceived.trigger(new Uint8Array(data)),
+                (error) => console.log("Error during data reception : " + error)
+            );
         }
     }
     
