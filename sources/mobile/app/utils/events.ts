@@ -1,9 +1,9 @@
-interface ICustomEvent<T> {
+export interface ISimpleEvent<T> {
     on(handler: { (data?: T): void });
     off(handler: { (data?: T): void });
 }
 
-class CustomEvent<T> implements ICustomEvent<T> {
+export class SimpleEvent<T> implements ISimpleEvent<T> {
     private handlers: { (data?: T): void; }[] = [];
 
     public on(handler: { (data?: T): void }) {
