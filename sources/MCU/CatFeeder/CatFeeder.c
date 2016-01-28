@@ -77,8 +77,8 @@ void setup()
 	init_time();
 	message_init();
 	
-	serial_writeString("Welcome to CatFeeder v0.1\r\n");
-	serial_writeString("-------------------------\r\n");
+	//serial_writeString("Welcome to CatFeeder v0.1\r\n");
+	//serial_writeString("-------------------------\r\n");
 	rtc_init();
 
 	time current_time;
@@ -89,7 +89,7 @@ void setup()
 	set_time(current_time.hours, current_time.minutes, current_time.seconds);
 	rtc_getAlarm2(&a);
 	set_alarm(1, a.alarm_time.hours, a.alarm_time.minutes, a.alarm_time.seconds);
-	displayInfos();
+	//displayInfos();
 	
 }
 
@@ -141,12 +141,20 @@ void handlerFeed(const message msg)
 	}
 }
 
-#define MESSAGE_HANDLERS_COUNT 3
+void handlerPing(const message msg)
+{
+	serial_writeByte('A');
+	serial_writeString("Pong");
+	serial_writeByte('Z');
+}
+
+#define MESSAGE_HANDLERS_COUNT 4
 
 messageHandlingInfo messageHandlers[MESSAGE_HANDLERS_COUNT] = {
 	{ .id = 'T', .expectedSize = 0, .handler = handlerGetTime},
 	{ .id = 'S', .expectedSize = 6, .handler = handlerSetTime},
-	{ .id = 'F', .expectedSize = 0, .handler = handlerFeed}
+	{ .id = 'F', .expectedSize = 0, .handler = handlerFeed},
+	{ .id = 0x47, .expectedSize = 0, .handler = handlerPing}
 };
 
 
@@ -185,19 +193,19 @@ void loop()
 					// Check expected size
 					if (((msg.size -1) == messageHandlers[i].expectedSize) || (messageHandlers[i].expectedSize == 0xff))
 					{
-						serial_writeString("Message handled\r\n");
+						//serial_writeString("Message handled\r\n");
 						messageHandlers[i].handler(msg);
 					}
 					else
 					{
-						serial_writeString("Wrong message size\r\n");
+						//serial_writeString("Wrong message size\r\n");
 					}
 					break;
 				}
 			}
 			if (!isHandled)
 			{
-				serial_writeString("Unknown action\r\n");
+				//serial_writeString("Unknown action\r\n");
 			}
 		}
 
