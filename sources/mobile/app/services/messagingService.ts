@@ -22,7 +22,7 @@ export class MessagingService
     private onMessageReceived:SimpleEvent<IMessage>;
     private messageStatus: MessageStatus;
     
-    private messageData: Uint8Array;
+    private messageData: Array<number>;
 
     private btService:BluetoothService;
     
@@ -33,30 +33,45 @@ export class MessagingService
         this.onMessageReceived = new SimpleEvent<IMessage>();
         this.btService = bluetoothService;
         this.btService.dataReceived.on(this.dataReceivedHandler.bind(this));
-        this.messageData = new Uint8Array(0);
+        this.messageData = new Array<number>();
         this.resetMessage();
     }
     
-    sendFeedCatsMessage():Promise<void>
+    sendPingMessage():Promise<void>
     {
         return new Promise<void>(
-            function(resolve, reject)
+            (resolve, reject) =>
             {
-                this.btService.sendRaw(this.buildMessage([0x46]))
+                this.btService.sendRaw(new Uint8Array(this.buildMessage([0x47])))
                 .then(
                     () => resolve(),
-                    () => reject()
+                    (error) => reject(error)
                 );
             }
         );
     }
     
-    private buildMessage(payload:Uint8Array): Uint8Array
+    sendFeedCatsMessage():Promise<void>
+    {
+        return new Promise<void>(
+            (resolve, reject) =>
+            {
+                this.btService.sendRaw(new Uint8Array(this.buildMessage([0x46])))
+                .then(
+                    () => resolve(),
+                    (error) => reject(error)
+                );
+            }
+        );
+    }
+    
+    private buildMessage(payload:Array<number>): Array<number>
     {
         // TODO : escape tokens
-        let message: Uint8Array = new Uint8Array(payload);
-        message.set(0, this.MessageBeginToken);
-        message.set(message.length, this.MessageEndToken);
+        let message: number[] = new Array<number>();
+        message.push(this.MessageBeginToken);
+        payload.forEach((value) => message.push(value));
+        message.push(this.MessageEndToken);
         return message;
     }
     
@@ -74,12 +89,12 @@ export class MessagingService
             {
                 if (this.messageStatus == MessageStatus.EscapeTokenReceived)
                 {
-                        this.messageData.set([value], this.messageData.length);
+                        this.messageData.push(value);
                         this.messageStatus = MessageStatus.DataExpected;
                 }
                 else if (value == this.MessageBeginToken)
                 {
-                    this.messageData = new Uint8Array(0);
+                    this.messageData = new Array<number>();
                     this.messageStatus = MessageStatus.DataExpected;
                 }
                 else if (value == this.MessageEndToken)
@@ -92,7 +107,7 @@ export class MessagingService
                             let message:IMessage = 
                             {
                                 code: this.messageData[0],
-                                data: this.messageData.length==1 ? new Uint8Array(0) : this.messageData.slice(1,this.messageData.length-1)
+                                data: this.messageData.length==1 ? new Uint8Array(0) : new Uint8Array(this.messageData.slice(1,this.messageData.length))
                             };
                             this.onMessageReceived.trigger(message);
                             this.resetMessage();
@@ -109,7 +124,7 @@ export class MessagingService
                 }
                 else if (this.messageStatus == MessageStatus.DataExpected)
                 {
-                    this.messageData.set([value], this.messageData.length);
+                    this.messageData.push(value);
                 }
             }
         )

@@ -43,7 +43,7 @@ export class BluetoothService
         }
         this.onDataReceived = new Events.SimpleEvent<Uint8Array>();
         bluetoothSerial.subscribeRawData(
-            (data) => this.onDataReceived.trigger(new Uint8Array(data)),
+            (data) => {console.log('Data received :' + data.length);this.onDataReceived.trigger(new Uint8Array(data))},
             (error) => console.log("Error during data reception : " + error)
         );
     }
@@ -58,7 +58,7 @@ export class BluetoothService
         return new Promise<void>(
             function (resolve, reject)
             {
-                bluetoothSerial.sendRaw(data, resolve, reject);
+                bluetoothSerial.write(data, resolve, reject);
             }
         );
     }

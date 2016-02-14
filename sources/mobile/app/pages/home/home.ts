@@ -27,7 +27,18 @@ export class HomePage {
     this.messaging = messaging;
     
     this.bluetoothInfo = this.bluetoothService.getStatus();
+    this.messaging.messageReceived.on(this.onMessageReceived.bind(this));
     
+  }
+  
+  onMessageReceived(message:Messaging.IMessage)
+  {
+      let alert = Alert.create({
+                    title: 'Message received',
+                    subTitle: 'Pong',
+                    buttons: ['OK']
+                });
+      this.nav.present(alert);
   }
   
   onPageWillEnter()
@@ -61,7 +72,16 @@ export class HomePage {
       this.messaging.sendFeedCatsMessage()
       .then(
           () => console.log("Feed cats OK"),
-          () => console.error("Error sending Feedcat message")
+          (error) => console.error("Error sending Feedcat message" + error)
+      );
+  }
+  
+  ping()
+  {
+      this.messaging.sendPingMessage()
+      .then(
+          () => console.log("Ping OK"),
+          (error) => console.error("Error sending Ping message : " + error)
       );
   }
 }

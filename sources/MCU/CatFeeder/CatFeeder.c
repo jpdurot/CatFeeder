@@ -178,7 +178,7 @@ void loop()
 	// Handle communication
 	if (message_available())
 	{
-		serial_writeString("Message received\r\n");
+		//serial_writeString("Message received\r\n");
 		message msg;
 		message_get(&msg);
 		if (msg.size > 0)
