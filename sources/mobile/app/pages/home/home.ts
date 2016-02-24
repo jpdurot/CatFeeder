@@ -2,6 +2,7 @@ import {Page, NavController, Alert} from 'ionic-framework/ionic';
 
 import {SettingsPage} from '../settings/settings';
 import * as Pipes from '../../utils/pipes';
+import {Strings} from '../../utils/strings';
 
 import * as Bluetooth from '../../services/bluetoothService';
 import * as Storage from '../../services/storageService';
@@ -35,9 +36,6 @@ export class HomePage {
     this.debug = debug;
     
     this.debugMessages = this.debug.Messages;
-    this.debug.logDebug("Debug message");
-    this.debug.logInfo("Info message");
-    this.debug.logError("Error message");
     
     this.bluetoothInfo = this.bluetoothService.getStatus();
     this.messaging.messageReceived.on(this.onMessageReceived.bind(this));
@@ -46,7 +44,7 @@ export class HomePage {
   
   onMessageReceived(message:Messaging.IMessage)
   {
-      
+      this.debug.logDebug("Message received : Code = " + Strings.toHexString([message.code]) + " Data = " + Strings.toHexString(message.data));
   }
   
   onPageWillEnter()

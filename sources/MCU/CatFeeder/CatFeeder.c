@@ -85,8 +85,6 @@ void displayInfos()
 
 void setup()
 {
-	
-	DDRB |= (1<<PORTB1);
 	_delay_ms(7000);
 	init_time();
 	message_init();
@@ -163,9 +161,6 @@ void handlerFeed(const message msg)
 
 void handlerPing(const message msg)
 {
-	/*serial_writeByte('A');
-	serial_writeByte(RSP_PING_OK);
-	serial_writeByte('Z');*/
 	char rsp = RSP_PING_OK;
 	message_send(&rsp, 1);
 }

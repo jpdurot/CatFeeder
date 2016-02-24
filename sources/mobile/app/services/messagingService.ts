@@ -114,7 +114,6 @@ export class MessagingService
                                 code: this.messageData[0],
                                 data: this.messageData.length==1 ? new Uint8Array(0) : new Uint8Array(this.messageData.slice(1,this.messageData.length))
                             };
-                            this.debugService.logDebug("Message received : Code = " + Strings.toHexString([message.code]) + " Data = " + Strings.toHexString(message.data));
                             this.onMessageReceived.trigger(message);
                             this.resetMessage();
                         }
