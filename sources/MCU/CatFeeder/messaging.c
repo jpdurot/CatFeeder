@@ -93,5 +93,20 @@ void message_get(message* msg)
 
 void message_send(char* data, int dataSize)
 {
-	//TODO : to be implemented
+	char buffer[dataSize*2];
+	uint8_t index = 0;
+	buffer[index++] = MESSAGE_START_BYTE;
+	for (int i=0; i< dataSize;i++)
+	{
+		if (data[i] == MESSAGE_START_BYTE 
+			|| data[i] == MESSAGE_END_BYTE
+			|| data[i] == MESSAGE_ESCAPE_BYTE  )
+		{
+			buffer[index++] = MESSAGE_ESCAPE_BYTE;
+		}
+		buffer[index++] = data[i];
+	}
+	buffer[index++] = MESSAGE_END_BYTE;
+	buffer[index]= 0; // Mark end of string
+	serial_writeString(buffer);
 }

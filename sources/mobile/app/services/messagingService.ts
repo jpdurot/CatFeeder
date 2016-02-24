@@ -47,7 +47,7 @@ export class MessagingService
         return new Promise<void>(
             (resolve, reject) =>
             {
-                this.btService.sendRaw(new Uint8Array(this.buildMessage([0x47])))
+                this.btService.sendRaw(new Uint8Array(this.buildMessage([0x01])))
                 .then(
                     () => resolve(),
                     (error) => reject(error)
@@ -61,7 +61,7 @@ export class MessagingService
         return new Promise<void>(
             (resolve, reject) =>
             {
-                this.btService.sendRaw(new Uint8Array(this.buildMessage([0x46])))
+                this.btService.sendRaw(new Uint8Array(this.buildMessage([0x02])))
                 .then(
                     () => resolve(),
                     (error) => reject(error)

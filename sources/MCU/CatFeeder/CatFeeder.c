@@ -20,7 +20,21 @@
 uint8_t lastSecond = 0xFF;
 char txBuffer[9];
 
-void displayAlarmInfos(alarm a)
+#define CMD_PING	0x01
+#define RSP_PING_OK	(0x80 | CMD_PING)
+#define RSP_PING_KO	(0xC0 | CMD_PING)
+
+#define CMD_FEED	0x02
+#define RSP_FEED_OK	(0x80 | CMD_FEED)
+#define RSP_FEED_KO	(0xC0 | CMD_FEED)
+
+#define CMD_STATUS	0x03
+#define RSP_STATUS_OK	(0x80 | CMD_STATUS)
+#define RSP_STATUS_KO	(0xC0 | CMD_STATUS)
+
+
+
+/*void displayAlarmInfos(alarm a)
 {
 	char currentTime[10];
 	get_time_string(currentTime, &a.alarm_time);
@@ -67,13 +81,13 @@ void displayInfos()
 	serial_writeString("\r\n");
 	
 	
-}
+}*/
 
 void setup()
 {
 	
 	DDRB |= (1<<PORTB1);
-	_delay_ms(4000);
+	_delay_ms(7000);
 	init_time();
 	message_init();
 	
@@ -102,7 +116,7 @@ typedef struct
 	messageHandler handler;
 } messageHandlingInfo;
 
-void handlerGetTime(const message msg)
+/*void handlerGetTime(const message msg)
 {
 	// Get time command
 	char timeBuffer[9];
@@ -131,30 +145,38 @@ void handlerSetTime(const message msg)
 	rtc_getTime(&currentTime);
 	set_time(currentTime.hours, currentTime.minutes, currentTime.seconds);
 	serial_writeString("Set time OK\r\n");
-}
+}*/
 
 void handlerFeed(const message msg)
 {
 	if (writeRegister(0x20,0, 0x02) == RTC_OK) // Feed !
 	{
-		serial_writeString("Miam Kyou & Yoshi !!! \r\n");
+		char rspOk = RSP_FEED_OK;
+		message_send(&rspOk, 1);
+	}
+	else
+	{
+		char rspKo = RSP_FEED_KO;
+		message_send(&rspKo, 1);
 	}
 }
 
 void handlerPing(const message msg)
 {
-	serial_writeByte('A');
-	serial_writeString("Pong");
-	serial_writeByte('Z');
+	/*serial_writeByte('A');
+	serial_writeByte(RSP_PING_OK);
+	serial_writeByte('Z');*/
+	char rsp = RSP_PING_OK;
+	message_send(&rsp, 1);
 }
 
-#define MESSAGE_HANDLERS_COUNT 4
+#define MESSAGE_HANDLERS_COUNT 2
 
 messageHandlingInfo messageHandlers[MESSAGE_HANDLERS_COUNT] = {
-	{ .id = 'T', .expectedSize = 0, .handler = handlerGetTime},
-	{ .id = 'S', .expectedSize = 6, .handler = handlerSetTime},
-	{ .id = 'F', .expectedSize = 0, .handler = handlerFeed},
-	{ .id = 0x47, .expectedSize = 0, .handler = handlerPing}
+	/*{ .id = 'T', .expectedSize = 0, .handler = handlerGetTime},
+	{ .id = 'S', .expectedSize = 6, .handler = handlerSetTime},*/
+	{ .id = CMD_FEED, .expectedSize = 0, .handler = handlerFeed},
+	{ .id = CMD_PING, .expectedSize = 0, .handler = handlerPing}
 };
 
 

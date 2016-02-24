@@ -46,12 +46,7 @@ export class HomePage {
   
   onMessageReceived(message:Messaging.IMessage)
   {
-      let alert = Alert.create({
-                    title: 'Message received',
-                    subTitle: 'Pong',
-                    buttons: ['OK']
-                });
-      this.nav.present(alert);
+      
   }
   
   onPageWillEnter()
