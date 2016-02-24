@@ -4,6 +4,8 @@ import {Array} from '../utils/array';
 
 import * as Events from '../utils/events';
 
+import * as Debug from './debugService';
+
 
 export interface IBluetoothDevice
 {
@@ -30,12 +32,14 @@ export class BluetoothService
     private connectPromise:Promise<boolean>;
     private listDevicesPromise:Promise<Array<IBluetoothDevice>>;
     private bluetoothStatus:IBluetoothStatus;
+    private debugService:Debug.DebugService;
     private onDataReceived:Events.SimpleEvent<Uint8Array>;
     
     public get dataReceived(): Events.SimpleEvent<Uint8Array> {return this.onDataReceived;}
     
-    constructor()
+    constructor(debugService: Debug.DebugService)
     {
+        this.debugService = debugService;
         this.bluetoothStatus = 
         {
             status: BluetoothConnectionStatus.NotConnected,
@@ -43,8 +47,8 @@ export class BluetoothService
         }
         this.onDataReceived = new Events.SimpleEvent<Uint8Array>();
         bluetoothSerial.subscribeRawData(
-            (data) => {console.log('Data received :' + data.length);this.onDataReceived.trigger(new Uint8Array(data))},
-            (error) => console.log("Error during data reception : " + error)
+            (data) => {this.onDataReceived.trigger(new Uint8Array(data))},
+            (error) => this.debugService.logError("Error during data reception : " + error)
         );
     }
     

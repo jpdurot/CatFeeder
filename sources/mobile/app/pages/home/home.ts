@@ -6,6 +6,7 @@ import * as Pipes from '../../utils/pipes';
 import * as Bluetooth from '../../services/bluetoothService';
 import * as Storage from '../../services/storageService';
 import * as Messaging from '../../services/messagingService';
+import * as Debug from '../../services/debugService';
 
 @Page({
   templateUrl: 'build/pages/home/home.html',
@@ -16,15 +17,27 @@ export class HomePage {
     private bluetoothService: Bluetooth.BluetoothService;
     private storage: Storage.StorageService;
     private messaging: Messaging.MessagingService;
+    private debug: Debug.DebugService;
     
     private settings:Storage.ISettings;
     private bluetoothInfo: Bluetooth.IBluetoothStatus;
+    debugMessages:Array<Debug.IDebugMessage>;
     
-  constructor(nav: NavController, bluetooth: Bluetooth.BluetoothService, storage: Storage.StorageService, messaging: Messaging.MessagingService) {
+  constructor(  nav: NavController, 
+                bluetooth: Bluetooth.BluetoothService, 
+                storage: Storage.StorageService, 
+                messaging: Messaging.MessagingService,
+                debug: Debug.DebugService) {
     this.nav = nav;
     this.bluetoothService = bluetooth;
     this.storage = storage;
     this.messaging = messaging;
+    this.debug = debug;
+    
+    this.debugMessages = this.debug.Messages;
+    this.debug.logDebug("Debug message");
+    this.debug.logInfo("Info message");
+    this.debug.logError("Error message");
     
     this.bluetoothInfo = this.bluetoothService.getStatus();
     this.messaging.messageReceived.on(this.onMessageReceived.bind(this));
@@ -52,6 +65,7 @@ export class HomePage {
             (result) => {},
             (error)=>
             {
+                this.debug.logError('Unable to connect: ' + error);
                 let alert = Alert.create({
                     title: 'Bluetooth',
                     subTitle: 'Unable to connect: ' + error,
@@ -71,8 +85,8 @@ export class HomePage {
   {
       this.messaging.sendFeedCatsMessage()
       .then(
-          () => console.log("Feed cats OK"),
-          (error) => console.error("Error sending Feedcat message" + error)
+          () => this.debug.logDebug("Feed cats OK"),
+          (error) => this.debug.logError("Error sending Feedcat message" + error)
       );
   }
   
@@ -80,8 +94,24 @@ export class HomePage {
   {
       this.messaging.sendPingMessage()
       .then(
-          () => console.log("Ping OK"),
-          (error) => console.error("Error sending Ping message : " + error)
+          () => this.debug.logDebug("Ping OK"),
+          (error) => this.debug.logError("Error sending Ping message : " + error)
       );
+  }
+  
+  getMessageClass(msg:Debug.IDebugMessage)
+  {
+      switch (msg.type)
+      {
+          case Debug.MessageType.Debug:
+            return "debug";
+            break;
+          case Debug.MessageType.Info:
+            return "info";
+            break;
+          case Debug.MessageType.Error:
+            return "error";
+            break;
+      }
   }
 }

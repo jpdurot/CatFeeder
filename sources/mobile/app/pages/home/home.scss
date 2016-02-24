@@ -1,9 +1,26 @@
-.getting-started {
+$debugMessageDebugColor: green;
+$debugMessageInfoColor: blue;
+$debugMessageErrorColor: red;
 
-  p {
-    margin: 20px 0;
-    line-height: 22px;
-    font-size: 16px;
-  }
-
+ul.debug-container
+{
+    list-style-type: none;
+    padding-left: 10px;
+    margin-top: 0px;
+    li 
+    {
+        &.debug
+        {
+            color: $debugMessageDebugColor;
+        }
+        &.info
+        {
+            color: $debugMessageInfoColor;
+        }
+        &.error
+        {
+            color: $debugMessageErrorColor;
+        }
+    }
+    
 }

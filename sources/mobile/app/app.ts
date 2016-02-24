@@ -5,10 +5,11 @@ import {HomePage} from './pages/home/home';
 import {BluetoothService} from "./services/bluetoothService";
 import {MessagingService} from "./services/messagingService";
 import {StorageService} from "./services/storageService";
+import {DebugService} from "./services/debugService";
 
 @App({
   templateUrl: 'build/app.html',
-  providers: [BluetoothService, MessagingService, StorageService]
+  providers: [BluetoothService, MessagingService, StorageService, DebugService]
 })
 
 class MyApp {

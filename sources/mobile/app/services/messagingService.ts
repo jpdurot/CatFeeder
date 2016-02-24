@@ -1,8 +1,11 @@
 import {Injectable} from 'angular2/core';
 
 import {BluetoothService} from './bluetoothService';
+import {DebugService} from './debugService';
+
 
 import {SimpleEvent, ISimpleEvent} from '../utils/events';
+import {Strings} from '../utils/strings';
 
 export interface IMessage
 {
@@ -25,13 +28,15 @@ export class MessagingService
     private messageData: Array<number>;
 
     private btService:BluetoothService;
+    private debugService: DebugService;
     
     public get messageReceived(): ISimpleEvent<IMessage> { return this.onMessageReceived ;}
     
-    constructor(bluetoothService:BluetoothService)
+    constructor(bluetoothService:BluetoothService, debugService: DebugService)
     {
         this.onMessageReceived = new SimpleEvent<IMessage>();
         this.btService = bluetoothService;
+        this.debugService = debugService;
         this.btService.dataReceived.on(this.dataReceivedHandler.bind(this));
         this.messageData = new Array<number>();
         this.resetMessage();
@@ -109,6 +114,7 @@ export class MessagingService
                                 code: this.messageData[0],
                                 data: this.messageData.length==1 ? new Uint8Array(0) : new Uint8Array(this.messageData.slice(1,this.messageData.length))
                             };
+                            this.debugService.logDebug("Message received : Code = " + Strings.toHexString([message.code]) + " Data = " + Strings.toHexString(message.data));
                             this.onMessageReceived.trigger(message);
                             this.resetMessage();
                         }
