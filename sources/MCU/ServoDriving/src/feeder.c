@@ -1,0 +1,153 @@
+#include "feeder.h"
+
+#include <util/delay.h>
+
+#include "utils.h"
+#include "servo.h"
+#include "i2c_slave.h"
+#include "weightSensor.h"
+
+uint16_t desiredWeight = 400;
+
+#define SERVO1_MAX_ANGLE	   160
+#define SERVO1_MIN_ANGLE	   2
+#define SERVO1_DELAY_ANGLE	 7
+#define SERVO1_DELAY_MIDDLE  0
+#define SERVO1_ANGLE         (SERVO1_MAX_ANGLE - SERVO1_MIN_ANGLE)
+
+#define SERVO2_MAX_ANGLE	   160
+#define SERVO2_MIN_ANGLE	   2
+#define SERVO2_DELAY_ANGLE	 15
+#define SERVO2_DELAY_MIDDLE	 2000
+
+
+#define SERVO1_PIN_CMD	A,2
+#define SERVO2_PIN_CMD	A,3
+
+#define I2C_REG_CALIBRATION 2
+#define I2C_REG_WEIGHT 3
+
+#define A1 A,1
+
+
+// Private functions
+
+void setStep1()
+{
+  CLEARBIT(SERVO2_PIN_CMD);
+  SETBIT(SERVO1_PIN_CMD);
+}
+
+void setStep2()
+{
+  CLEARBIT(SERVO1_PIN_CMD);
+  SETBIT(SERVO2_PIN_CMD);
+}
+
+// Returns weight and set I2C register with the new value
+int32_t updateWeight()
+{
+  int32_t weight = weight_getWeight();
+  i2c_setRegister(I2C_REG_WEIGHT,(weight & 0xff000000)>> 24);
+  i2c_setRegister(I2C_REG_WEIGHT + 1,(weight & 0xff0000)>> 16);
+  i2c_setRegister(I2C_REG_WEIGHT + 2,(weight & 0xff00)>> 8);
+  i2c_setRegister(I2C_REG_WEIGHT + 3,(weight & 0xff));
+  return weight;
+}
+
+void delayMs(uint16_t ms)
+{
+	for (uint16_t i =0;i< ms;i++)
+	{
+		_delay_ms(1);
+	}
+}
+
+void feeder_setDesiredWeight(uint8_t weight)
+{
+  desiredWeight = weight;
+}
+
+void feeder_init()
+{
+  servo_init();
+  weight_init();
+  SETOUTPUT(SERVO1_PIN_CMD);
+  SETOUTPUT(SERVO2_PIN_CMD);
+}
+
+void feeder_feed()
+{
+  // Assume feed is empty
+  weight_setTare();
+  uint8_t calibration = i2c_getRegister(I2C_REG_CALIBRATION);
+  weight_setCalibration(calibration);
+  int32_t weight = updateWeight();
+  setStep1();
+  servo_start();
+  while (weight < desiredWeight)
+  {
+    // Define when to check weight during servo move
+    // If we are close to the desired weight, check more often
+    uint8_t angleModulo = SERVO1_ANGLE;
+    if (weight < (desiredWeight - 200))
+    {
+      // No check
+      angleModulo = SERVO1_ANGLE;
+    }
+    else if (weight < (desiredWeight - 100))
+    {
+      // 2 checks
+      angleModulo = SERVO1_ANGLE / 4;
+    }
+    else
+    {
+      // 3 checks
+      angleModulo = SERVO1_ANGLE / 6;
+    }
+
+    // Move servo to push cat food
+    uint8_t index = 0;
+    for (int i = SERVO1_MIN_ANGLE;i <= SERVO1_MAX_ANGLE;i++)
+    {
+
+      servo_setValue(i);
+			delayMs(SERVO1_DELAY_ANGLE);
+    }
+
+    // Move back to the initial position
+    delayMs(SERVO1_DELAY_MIDDLE);
+    for (int i = SERVO1_MAX_ANGLE;i >= SERVO1_MIN_ANGLE;i--)
+    {
+      if (index % angleModulo == 0)
+      {
+        //Check weight
+        weight = updateWeight();
+        if (weight >= desiredWeight)
+          break;
+      }
+      servo_setValue(i);
+			delayMs(SERVO1_DELAY_ANGLE);
+      index++;
+    }
+    // Check weight a last time
+    weight = updateWeight();
+  }
+  // Here we expect feeder has the expected weight
+  // Move servo 2 so that food fall on the bowl
+  setStep2();
+  SETBIT(A1);
+  for (int i = SERVO2_MIN_ANGLE;i <= SERVO2_MAX_ANGLE;i++)
+  {
+    servo_setValue(i);
+    delayMs(SERVO2_DELAY_ANGLE);
+  }
+  delayMs(SERVO2_DELAY_MIDDLE);
+  for (int i = SERVO2_MAX_ANGLE;i >= SERVO2_MIN_ANGLE;i--)
+  {
+    servo_setValue(i);
+    delayMs(SERVO2_DELAY_ANGLE);
+  }
+  servo_stop();
+  CLEARBIT(A1);
+}
