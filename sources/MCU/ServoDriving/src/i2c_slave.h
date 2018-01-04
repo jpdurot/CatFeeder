@@ -3,7 +3,7 @@
  *
  * Created: 01/11/2015 23:04:39
  *  Author: JP
- */ 
+ */
 
 
 #ifndef USITWISLAVE_H_
@@ -26,7 +26,7 @@
 #define USI_START_VECTOR    USI_STR_vect
 #define USI_OVERFLOW_VECTOR USI_OVF_vect
 
-#define I2C_MAX_REGISTER	0x01
+#define I2C_MAX_REGISTER	0x06
 #define I2C_CMD_REGISTER	0x00
 #define I2C_STATUS_REGISTER	0x01
 #define I2C_NO_ADDRESS_SET	0xFF
@@ -45,6 +45,8 @@ uint8_t getStatus();
 void setStatus(uint8_t value);
 uint8_t getCommand();
 void setCommand(uint8_t value);
+uint8_t i2c_getRegister(uint8_t index);
+void i2c_setRegister(uint8_t index, uint8_t value);
 
 
 #endif /* USITWISLAVE_H_ */

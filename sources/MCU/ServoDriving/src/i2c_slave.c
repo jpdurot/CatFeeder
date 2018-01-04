@@ -1,10 +1,9 @@
-/*	See LICENSE for Copyright etc. */
+#include "i2c_slave.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
-
-#include "usitwislave.h"
+#include "utils.h"
 
 enum
 {
@@ -38,7 +37,7 @@ static uint16_t	overflow_conditions_count;
 static uint16_t	local_frames_count;
 static uint16_t	idle_call_count;
 
-volatile uint8_t i2c_memory[I2C_MAX_REGISTER + 1];
+static volatile uint8_t i2c_memory[I2C_MAX_REGISTER + 1];
 
 //volatile uint8_t statusRegister =0x00;
 //volatile uint8_t commandRegister = 0x00;
@@ -59,14 +58,24 @@ void setStatus(uint8_t value)
 
 uint8_t getCommand()
 {
-	//return commandRegister;
 	return i2c_memory[I2C_CMD_REGISTER];
 }
 
 void setCommand(uint8_t value)
 {
-	//commandRegister = value;
 	i2c_memory[I2C_CMD_REGISTER] = value;
+}
+
+uint8_t i2c_getRegister(uint8_t index)
+{
+	if (index > I2C_MAX_REGISTER)
+		return 0;
+	return i2c_memory[index];
+}
+void i2c_setRegister(uint8_t index, uint8_t value)
+{
+	if (index <= I2C_MAX_REGISTER)
+		i2c_memory[index] = value;
 }
 
 static void set_sda_to_input(void)
@@ -124,7 +133,7 @@ static inline void twi_reset_state(void)
 	(1 << USIWM1) | (0 << USIWM0) |					// set usi in two-wire mode, disable bit counter overflow hold
 	(1 << USICS1) | (0 << USICS0) | (0 << USICLK) |	// shift register clock source = external, positive edge, 4-bit counter source = external, both edges
 	(0 << USITC);									// don't toggle clock-port pin
-	bufferAddress = I2C_NO_ADDRESS_SET; 
+
 }
 
 static void twi_reset(void)
@@ -157,11 +166,14 @@ static inline void twi_init(void)
 	#endif
 
 	twi_reset();
+
 }
 
 ISR(USI_START_VECTOR)
 {
 	set_sda_to_input();
+
+
 
 	// wait for SCL to go low to ensure the start condition has completed (the
 	// start detector will hold SCL low) - if a stop condition arises then leave
@@ -192,7 +204,7 @@ ISR(USI_START_VECTOR)
 
 	of_state = of_state_check_address;
 	ss_state = ss_state_after_start;
-	//bufferAddress = I2C_NO_ADDRESS_SET;
+
 
 	USIDR = 0xff;
 
@@ -244,7 +256,11 @@ ISR(USI_OVERFLOW_VECTOR)
 				if(direction)					// read request from master
 				of_state = of_state_send_data;
 				else							// write request from master
-				of_state = of_state_receive_data;
+				{
+					bufferAddress = I2C_NO_ADDRESS_SET;
+					of_state = of_state_receive_data;
+				}
+
 
 				USIDR		= 0x00;
 				set_counter = 0x0e;				// send 1 bit (2 edges)
@@ -267,20 +283,21 @@ ISR(USI_OVERFLOW_VECTOR)
 		{
 			ss_state = ss_state_data_processed;
 			of_state = of_state_request_ack;
-			
+
 			if ( bufferAddress <= I2C_MAX_REGISTER )
 			{
 				//if (bufferAddress == 0x00)
 				//	USIDR = commandRegister;
 				//if (bufferAddress == 0x01)
-				//	USIDR = statusRegister;	
+				//	USIDR = statusRegister;
 				USIDR = i2c_memory[bufferAddress];
+
 				bufferAddress++;
 			}
 			else
 			{
 				USIDR = 0x00;					// no more data, but cannot send "nothing" or "nak"
-			}			
+			}
 
 			set_counter = 0x00;
 			set_sda_to_output();				// initiate send data
@@ -342,7 +359,7 @@ ISR(USI_OVERFLOW_VECTOR)
 
 			if (bufferAddress == I2C_NO_ADDRESS_SET)
 			{
-				
+	      //CLEARBIT(A0);
 				bufferAddress = data;
 			}
 			else if (bufferAddress <= I2C_MAX_REGISTER)
