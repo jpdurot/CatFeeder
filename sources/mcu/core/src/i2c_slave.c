@@ -5,6 +5,8 @@
 #include <avr/sleep.h>
 #include "utils.h"
 
+#define A1 A,1
+
 enum
 {
 	of_state_check_address,
@@ -29,18 +31,7 @@ static uint8_t ss_state;
 
 static uint8_t	slave_address;
 
-static uint8_t	stats_enabled;
-static uint16_t	start_conditions_count;
-static uint16_t	stop_conditions_count;
-static uint16_t	error_conditions_count;
-static uint16_t	overflow_conditions_count;
-static uint16_t	local_frames_count;
-static uint16_t	idle_call_count;
-
 static volatile uint8_t i2c_memory[I2C_MAX_REGISTER + 1];
-
-//volatile uint8_t statusRegister =0x00;
-//volatile uint8_t commandRegister = 0x00;
 
 volatile uint8_t bufferAddress = I2C_NO_ADDRESS_SET;
 
@@ -194,16 +185,13 @@ ISR(USI_START_VECTOR)
 	{
 		twi_reset();
 
-		if(stats_enabled)
-		error_conditions_count++;
 		return;
 	}
 
-	if(stats_enabled)
-	start_conditions_count++;
-
 	of_state = of_state_check_address;
 	ss_state = ss_state_after_start;
+
+	//CLEARBIT(A1);
 
 
 	USIDR = 0xff;
@@ -230,9 +218,6 @@ ISR(USI_OVERFLOW_VECTOR)
 
 	uint8_t data		= USIDR;
 	uint8_t set_counter = 0x00;		// send 8 bits (16 edges)
-
-	if(stats_enabled)
-	overflow_conditions_count++;
 
 	again:
 	switch(of_state)
@@ -324,6 +309,7 @@ ISR(USI_OVERFLOW_VECTOR)
 		{
 			if(data)	// if NACK, the master does not want more data
 			{
+				SETBIT(A1);
 				of_state = of_state_check_address;
 				set_counter = 0x00;
 				twi_reset();
@@ -397,45 +383,4 @@ void usi_twi_slave(uint8_t slave_address_in)
 	twi_init();
 	setStatus(0x00);
 	sei();
-}
-
-void usi_twi_enable_stats(uint8_t onoff)
-{
-	stats_enabled				= onoff;
-	start_conditions_count		= 0;
-	stop_conditions_count		= 0;
-	error_conditions_count		= 0;
-	overflow_conditions_count	= 0;
-	local_frames_count			= 0;
-	idle_call_count				= 0;
-}
-
-uint16_t usi_twi_stats_start_conditions(void)
-{
-	return(start_conditions_count);
-}
-
-uint16_t usi_twi_stats_stop_conditions(void)
-{
-	return(stop_conditions_count);
-}
-
-uint16_t usi_twi_stats_error_conditions(void)
-{
-	return(error_conditions_count);
-}
-
-uint16_t usi_twi_stats_overflow_conditions(void)
-{
-	return(overflow_conditions_count);
-}
-
-uint16_t usi_twi_stats_local_frames(void)
-{
-	return(local_frames_count);
-}
-
-uint16_t usi_twi_stats_idle_calls(void)
-{
-	return(idle_call_count);
 }
