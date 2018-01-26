@@ -15,7 +15,7 @@ uint16_t desiredWeight = 400;
 #define SERVO1_DELAY_MIDDLE  0
 #define SERVO1_ANGLE         (SERVO1_MAX_ANGLE - SERVO1_MIN_ANGLE)
 
-#define SERVO2_MAX_ANGLE	   160
+#define SERVO2_MAX_ANGLE	   140
 #define SERVO2_MIN_ANGLE	   2
 #define SERVO2_DELAY_ANGLE	 15
 #define SERVO2_DELAY_MIDDLE	 2000
@@ -27,7 +27,7 @@ uint16_t desiredWeight = 400;
 #define I2C_REG_CALIBRATION 2
 #define I2C_REG_WEIGHT 3
 
-#define A1 A,1
+//#define A1 A,1
 
 
 // Private functions
@@ -76,8 +76,25 @@ void feeder_init()
   SETOUTPUT(SERVO2_PIN_CMD);
 }
 
+void servo_resetPosition()
+{
+  setStep1();
+  servo_setValue(SERVO1_MAX_ANGLE);
+  servo_start();
+  delayMs(1500);
+  servo_stop();
+  setStep2();
+  servo_setValue(SERVO2_MIN_ANGLE);
+  servo_start();
+  delayMs(1500);
+  servo_stop();
+
+}
+
 void feeder_feed()
 {
+  servo_resetPosition();
+
   // Assume feed is empty
   weight_setTare();
   uint8_t calibration = i2c_getRegister(I2C_REG_CALIBRATION);
@@ -136,7 +153,6 @@ void feeder_feed()
   // Here we expect feeder has the expected weight
   // Move servo 2 so that food fall on the bowl
   setStep2();
-  SETBIT(A1);
   for (int i = SERVO2_MIN_ANGLE;i <= SERVO2_MAX_ANGLE;i++)
   {
     servo_setValue(i);
@@ -149,5 +165,4 @@ void feeder_feed()
     delayMs(SERVO2_DELAY_ANGLE);
   }
   servo_stop();
-  CLEARBIT(A1);
 }
