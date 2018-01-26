@@ -30,7 +30,7 @@ int main()
 {
   _delay_ms(1000);
   feeder_init();
-  usi_twi_slave(0x20);
+  i2c_set_slave_id(0x20);
   setCommand(0);
   SETOUTPUT(A1);
   blinkReady();

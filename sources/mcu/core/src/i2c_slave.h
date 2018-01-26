@@ -38,7 +38,7 @@
 * 3-6 : last computed weight (R3<<24 + R4<<8 + R5<<8 + R6)
 */
 
-void		usi_twi_slave(uint8_t slave_address);
+void		i2c_set_slave_id(uint8_t slave_address);
 
 
 uint8_t getStatus();

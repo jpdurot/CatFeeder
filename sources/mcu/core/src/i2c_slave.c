@@ -374,7 +374,7 @@ ISR(USI_OVERFLOW_VECTOR)
 	(set_counter	<< USICNT0);		// set counter to 8 or 1 bits
 }
 
-void usi_twi_slave(uint8_t slave_address_in)
+void i2c_set_slave_id(uint8_t slave_address_in)
 {
 	slave_address			= slave_address_in;
 
