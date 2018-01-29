@@ -26,7 +26,7 @@
 #define USI_START_VECTOR    USI_STR_vect
 #define USI_OVERFLOW_VECTOR USI_OVF_vect
 
-#define I2C_MAX_REGISTER	0x06
+#define I2C_MAX_REGISTER	0x07
 #define I2C_CMD_REGISTER	0x00
 #define I2C_STATUS_REGISTER	0x01
 #define I2C_NO_ADDRESS_SET	0xFF
@@ -36,6 +36,7 @@
 * 1 : Status
 * 2 : Weigh sensor Calibration
 * 3-6 : last computed weight (R3<<24 + R4<<8 + R5<<8 + R6)
+* 7 : Food weight in grams
 */
 
 void		i2c_set_slave_id(uint8_t slave_address);

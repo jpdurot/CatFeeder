@@ -26,6 +26,7 @@ uint16_t desiredWeight = 400;
 
 #define I2C_REG_CALIBRATION 2
 #define I2C_REG_WEIGHT 3
+#define I2C_REG_FOOD_WEIGHT 7
 
 //#define A1 A,1
 
@@ -63,10 +64,6 @@ void delayMs(uint16_t ms)
 	}
 }
 
-void feeder_setDesiredWeight(uint8_t weight)
-{
-  desiredWeight = weight;
-}
 
 void feeder_init()
 {
@@ -98,6 +95,7 @@ void feeder_feed()
   // Assume feed is empty
   weight_setTare();
   uint8_t calibration = i2c_getRegister(I2C_REG_CALIBRATION);
+  desiredWeight = i2c_getRegister(I2C_REG_FOOD_WEIGHT) * 10;
   weight_setCalibration(calibration);
   int32_t weight = updateWeight();
   setStep1();
