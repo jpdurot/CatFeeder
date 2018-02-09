@@ -38,6 +38,27 @@ uint8_t intToBcd(uint8_t value)
 	return ((value/10) <<4) + (value%10);
 }
 
+uint8_t stringParse(char* stringToParse, uint8_t* intValue) {
+	uint16_t value = 0;
+	uint8_t digit;
+	for (;;stringToParse++) {
+		if (*stringToParse == 0) {
+			break;
+		}
+		digit = *stringToParse - '0';
+		if (digit > 9) {
+			return -1;
+		}
+
+		value = value *10 + digit;
+		if (value > 255) {
+			return -1;
+		}
+	}
+	*intValue = value;
+	return 0;
+}
+
 
 
 #endif /* UTIL_H_ */
