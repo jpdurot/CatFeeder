@@ -22,7 +22,7 @@ void reset()
 
 void message_init()
 {
-	serial_init();
+	//serial_init();
 	reset();
 }
 
