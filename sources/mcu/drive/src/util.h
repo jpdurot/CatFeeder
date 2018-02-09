@@ -3,7 +3,7 @@
  *
  * Created: 09/09/2015 21:45:01
  *  Author: JP
- */ 
+ */
 
 
 #ifndef UTIL_H_
@@ -16,7 +16,7 @@ void toString(uint8_t value, char* string)
 	uint8_t hundreds = value / 100;
 	if (hundreds > 0 )
 	{
-		string[index++] = value + '0';
+		string[index++] = hundreds + '0';
 	}
 	uint8_t tens = (value - hundreds*100) / 10;
 	if (tens > 0 ||index == 1)

@@ -3,15 +3,15 @@
  *
  * Created: 06/07/2015 22:04:57
  *  Author: JP
- */ 
+ */
 
 #include "serial.h"
 
-typedef struct 
+typedef struct
 {
 	char data[BUFFER_SIZE];
 	int pos;
-	int nextData;	
+	int nextData;
 } serialBuffer;
 
 volatile serialBuffer txBuffer;
@@ -24,10 +24,10 @@ void serial_init()
 	UCSR0B |= (1<<TXEN0)|(1<<RXEN0); // Enable transmission and reception
 	UCSR0B |= (1<<TXCIE0) | (1<<RXCIE0); // Enable interrupt on Transfer Complete
 	//UCSR0B |= (1<<UDRIE0); // Enable interrupt on Transfer Complete
-	UCSR0C |= (1<<UPM01)|(1<<UPM00) |(1<<UCSZ01)|(1<<UCSZ00); // Parity : Odd, Stop : 1 bit, char size : 8 bits
+	UCSR0C = (0<<UPM01)|(0<<UPM00) |(1<<UCSZ01)|(1<<UCSZ00); // Parity : None, Stop : 1 bit, char size : 8 bits (UPM1=1, UPM0=1 for Parity Odd)
 	// Set baud rate : UBRR = Fosc/(16*baud)-1
 	UBRR0L = UBRR_VALUE;
-	UBRR0H &= ~0x0F; // baud rate is defined on 12 bits, so ensure 4 lower bites are 0
+	UBRR0H &= ~0x0F; // baud rate is defined on 12 bits, so ensure 4 lower bits are 0
 	sei();
 	txBuffer.pos = -1;
 	txBuffer.nextData = 0;
@@ -79,13 +79,13 @@ ISR(USART_TX_vect)
 		txBuffer.pos = newPos;
 		UDR0 = txBuffer.data[txBuffer.pos];
 	}
-	
+
 }
 
 ISR(USART_RX_vect)
 {
 	rxBuffer.data[rxBuffer.nextData] = UDR0;
-	rxBuffer.nextData = (rxBuffer.nextData + 1) % BUFFER_SIZE; 	
+	rxBuffer.nextData = (rxBuffer.nextData + 1) % BUFFER_SIZE;
 }
 
 int serial_dataAvailable()
@@ -99,10 +99,3 @@ char serial_read()
 	rxBuffer.pos = (rxBuffer.pos + 1) % BUFFER_SIZE;
 	return result;
 }
-
-
-
-
-
-
-

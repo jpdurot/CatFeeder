@@ -79,16 +79,16 @@ void displayInfos()
 		serial_writeString("Next alarm : ---");
 	}
 	serial_writeString("\r\n");
-	
-	
+
+
 }*/
 
-void setup()
+void setup2()
 {
 	_delay_ms(7000);
 	init_time();
 	message_init();
-	
+
 	//serial_writeString("Welcome to CatFeeder v0.1\r\n");
 	//serial_writeString("-------------------------\r\n");
 	rtc_init();
@@ -102,12 +102,12 @@ void setup()
 	rtc_getAlarm2(&a);
 	set_alarm(1, a.alarm_time.hours, a.alarm_time.minutes, a.alarm_time.seconds);
 	//displayInfos();
-	
+
 }
 
 typedef void(*messageHandler)(const message msg);
 
-typedef struct 
+typedef struct
 {
 	char id;
 	uint8_t expectedSize;
@@ -188,10 +188,10 @@ void loop()
 		if (isAlarmRaised())
 		{
 			serial_writeString("Feed time !!!\r\n");
-			acknowledge_alarm();	
+			acknowledge_alarm();
 		}
 	}
-	
+
 	// Handle communication
 	if (message_available())
 	{
@@ -228,8 +228,8 @@ void loop()
 
 		/*else if (action == 'F')
 		{
-			
-			
+
+
 		}
 		else if (action == '1')
 		{
@@ -274,7 +274,7 @@ void loop()
 				t.seconds = seconds;
 				if (alarmNumber ==0)
 				{
-					
+
 					if (rtc_setAlarm1(t) != RTC_OK)
 					{
 						serial_writeString("Set alarm 0 KO !! (0)\r\n");
@@ -291,7 +291,7 @@ void loop()
 							serial_writeString("Set alarm 0 OK !!!\r\n");
 						}
 					}
-					
+
 				}
 				else
 				{
@@ -457,8 +457,8 @@ void loop()
 			{
 				serial_writeString("Servo driver command = ERROR GETTING INFO");
 			}
-			
-			
+
+
 		}
 		else if (action == '9')
 		{
@@ -477,8 +477,8 @@ void loop()
 			{
 				serial_writeString("Servo driver status = ERROR GETTING INFO");
 			}
-			
-			
+
+
 		}
 		else
 		{
@@ -488,11 +488,12 @@ void loop()
 	}
 }
 
-int main(void)
+
+/*int main(void)
 {
 	setup();
 	while(1)
 	{
 		loop();
 	}
-}
+}*/
