@@ -15,9 +15,10 @@ typedef struct  {
 
 } at_command_definition;
 
-#define AT_NB_DEFINITIONS 1
+#define AT_NB_DEFINITIONS 2
 at_command_definition at_definitions[AT_NB_DEFINITIONS] = {
-   {.name="VER", .get=getVersion, .set=0}
+   {.name="VER", .get=getVersion, .set=0},
+   {.name="CALIB", .get=getCalibration, .set=setCalibration}
 };
 
 
