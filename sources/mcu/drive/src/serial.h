@@ -3,7 +3,7 @@
  *
  * Created: 06/07/2015 22:04:45
  *  Author: JP
- */ 
+ */
 
 
 #ifndef SERIAL_H_
@@ -19,9 +19,9 @@
 
 void serial_init();
 
-void serial_writeByte(char data);
-
+void serial_writeChar(char data);
 void serial_writeString(char* message);
+void serial_writeInt(uint8_t value);
 
 int serial_dataAvailable();
 

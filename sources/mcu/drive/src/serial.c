@@ -36,7 +36,7 @@ void serial_init()
 	isTransmitting = 0;
 }
 
-void serial_writeByte(char data)
+void serial_writeChar(char data)
 {
 	if (txBuffer.nextData == txBuffer.pos)
 	{
@@ -53,7 +53,7 @@ void serial_writeString(char* message)
 	char* s = message;
 	while (*s)
 	{
-		serial_writeByte(*s);
+		serial_writeChar(*s);
 		s++;
 	}
 	if (!isTransmitting)
@@ -63,6 +63,12 @@ void serial_writeString(char* message)
 		txBuffer.pos = (txBuffer.pos +1) % BUFFER_SIZE;
 		UDR0 = txBuffer.data[txBuffer.pos];
 	}
+}
+
+void serial_writeInt(uint8_t value) {
+	char str[4];
+	sprintf(str,"%d", value);
+	serial_writeString(str);
 }
 
 // Interrupt subroutine
