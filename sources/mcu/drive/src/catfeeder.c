@@ -18,10 +18,6 @@ void init() {
   serial_writeString("OK\r\n");
 }
 
-
-
-
-
 int main() {
   init();
   serial_writeString("Init OK, ready to listen to commands !\r\n");

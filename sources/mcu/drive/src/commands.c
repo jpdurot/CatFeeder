@@ -9,6 +9,8 @@
 #define I2C_CALIBRATION_REGISTER 2
 #define I2C_FOOD_WEIGHT_REGISTER 7
 
+#define I2C_COMMAND_VALUE_FEED 3
+
 uint8_t getVersion(char* version) {
   strcpy(version, "1.0.0");
   return 0;
@@ -32,5 +34,13 @@ uint8_t setCalibration(char* calibrationValue) {
     return -1;
   }
   *calibrationValue = 0;
+  return 0;
+}
+
+uint8_t feed(char* returnValue) {
+  if (writeRegister(I2C_CORE_ADDRESS, I2C_COMMAND_REGISTER, I2C_COMMAND_VALUE_FEED) != 0) {
+    return -1;
+  }
+  *returnValue = 0;
   return 0;
 }
