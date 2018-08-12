@@ -1,5 +1,7 @@
 #include "feeder.h"
 
+#define FEEDER_TEST 1
+
 #include <util/delay.h>
 
 #include "utils.h"
@@ -93,14 +95,23 @@ void feeder_feed()
   servo_resetPosition();
 
   // Assume feed is empty
+#ifndef FEEDER_TEST
   weight_setTare();
   uint8_t calibration = i2c_getRegister(I2C_REG_CALIBRATION);
   desiredWeight = i2c_getRegister(I2C_REG_FOOD_WEIGHT) * 10;
   weight_setCalibration(calibration);
   int32_t weight = updateWeight();
+#else
+  int32_t weight = 0;
+#endif
   setStep1();
   servo_start();
+#ifdef FEEDER_TEST
+  uint8_t index;
+  while (index++ < 3)
+#else
   while (weight < desiredWeight)
+#endif
   {
     // Define when to check weight during servo move
     // If we are close to the desired weight, check more often
@@ -137,16 +148,20 @@ void feeder_feed()
       if (index % angleModulo == 0)
       {
         //Check weight
+        #ifndef FEEDER_TEST
         weight = updateWeight();
         if (weight >= desiredWeight)
           break;
+        #endif
       }
       servo_setValue(i);
 			delayMs(SERVO1_DELAY_ANGLE);
       index++;
     }
+      #ifndef FEEDER_TEST
     // Check weight a last time
     weight = updateWeight();
+    #endif
   }
   // Here we expect feeder has the expected weight
   // Move servo 2 so that food fall on the bowl
