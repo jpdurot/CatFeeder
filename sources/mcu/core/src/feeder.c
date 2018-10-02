@@ -1,6 +1,6 @@
 #include "feeder.h"
 
-#define FEEDER_TEST 1
+//#define FEEDER_TEST 1
 
 #include <util/delay.h>
 
@@ -108,7 +108,7 @@ void feeder_feed()
   servo_start();
 #ifdef FEEDER_TEST
   uint8_t index;
-  while (index++ < 3)
+  while (index++ < 1)
 #else
   while (weight < desiredWeight)
 #endif
@@ -166,10 +166,15 @@ void feeder_feed()
   // Here we expect feeder has the expected weight
   // Move servo 2 so that food fall on the bowl
   setStep2();
-  for (int i = SERVO2_MIN_ANGLE;i <= SERVO2_MAX_ANGLE;i++)
+  for (int i = SERVO2_MIN_ANGLE;i <= 70;i++)
   {
     servo_setValue(i);
     delayMs(SERVO2_DELAY_ANGLE);
+  }
+  for (int i = 71;i <= SERVO2_MAX_ANGLE;i++)
+  {
+    servo_setValue(i);
+    delayMs(SERVO2_DELAY_ANGLE * 3);
   }
   delayMs(SERVO2_DELAY_MIDDLE);
   for (int i = SERVO2_MAX_ANGLE;i >= SERVO2_MIN_ANGLE;i--)
