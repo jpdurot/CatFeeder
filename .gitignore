@@ -46,3 +46,6 @@ sources/mobile/plugins/
 sources/mobile/*.swp
 sources/mobile/.DS_Store
 sources/mobile/Thumbs.db
+
+# VS Code related files and dirs
+.vscode
