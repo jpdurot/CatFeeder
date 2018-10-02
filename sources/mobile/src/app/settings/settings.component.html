@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title><span translate>Settings</span></ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  <ion-card text-center>
+    <!--<img class="logo" src="assets/ngx-rocket-logo.png" alt="angular logo"/>-->
+    <ion-card-content>
+        <form (ngSubmit)="saveSettings()" [formGroup]="settingsForm" novalidate>
+          <ion-list [hidden]="isLoading">
+              <ion-item>
+                <ion-label floating translate>Calibration</ion-label>
+                <ion-input formControlName="calibration" type="number"></ion-input>
+              </ion-item>
+          </ion-list>
+          <button [hidden]="isLoading" type="submit" [disabled]="settingsForm.invalid" ion-button color="secondary" block>
+            <span translate>Update parameters</span>
+          </button>
+        </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

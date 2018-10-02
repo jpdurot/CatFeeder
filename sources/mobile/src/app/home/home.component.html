@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title><span translate>Home</span></ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  
+  <ion-card text-center>
+    <!--<img class="logo" src="assets/ngx-rocket-logo.png" alt="angular logo"/>-->
+    <ion-card-content>
+      <ion-card-title>
+        <span translate>APP_NAME</span>
+      </ion-card-title>
+      <ion-list>
+        <ion-item>
+          <span class="label" translate>Action en cours</span>
+          <ion-note item-end translate [color]="currentStatus ? 'secondary' : ''"> 
+            <span *ngIf="currentStatus" class="statusDescription" translate>{{currentStatus}}</span>
+            <span *ngIf="!currentStatus" class="statusDescription empty" translate>---</span>
+          </ion-note>
+        </ion-item>
+        <ion-item>
+          <span class="label" translate>Dernier miam</span>
+          <ion-note item-end color="secondary" translate>
+            <p *ngIf="lastFeed" class="lastFeedDescription">{{lastFeed.quantity}} g</p>
+            <p *ngIf="!lastFeed" class="lastFeedDescription">---</p>
+            <p *ngIf="lastFeed" class="lastFeedDescription">{{lastFeed.date | date : 'dd/MM/yyyy HH:mm'}}</p>
+            </ion-note>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+  <ion-card>
+    <ion-card-content>
+      <form (ngSubmit)="feed()" [formGroup]="feedForm" novalidate>
+          <app-loader [isLoading]="isLoading"></app-loader>
+          <ion-list [hidden]="isLoading">
+              <ion-item>
+                <ion-label floating translate>Requested food (in g)</ion-label>
+                <ion-input formControlName="requestedFood" type="number"></ion-input>
+              </ion-item>
+          </ion-list>
+          <button [hidden]="isLoading" type="submit" [disabled]="feedForm.invalid" ion-button color="primary" block>
+            <span translate>Feed</span>
+          </button>
+        </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

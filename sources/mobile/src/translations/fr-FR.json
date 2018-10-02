@@ -1,0 +1,23 @@
+{
+  "APP_NAME": "Feed The Cat",
+  "About": "A propos",
+  "Cancel": "Annuler",
+  "Feed" : "Donner à manger",
+  "Home": "Accueil",
+  "Calibration": "Calibration",
+  "Change language": "Changer la langue",
+  "Language": "Langue",
+  "Ok": "Ok",
+  "Login": "Connexion",
+  "Logout": "Déconnexion",
+  "Password": "Mot de passe",
+  "Password is required": "Mot de passe requis",
+  "Requested food (in g)": "Quantité de nourriture (en g)",
+  "Update parameters": "Mettre à jour",
+  "Username": "Identifiant",
+  "Username is required": "Identifiant requis",
+  "Username or password incorrect.": "Identifiant ou mot de passe incorrect.",
+  "Remember me": "Rester connecté",
+  "Settings": "Paramètres",
+  "Version": "Version"
+}

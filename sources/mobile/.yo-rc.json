@@ -1,0 +1,22 @@
+{
+  "generator-ngx-rocket": {
+    "version": "5.0.1",
+    "props": {
+      "location": "path",
+      "appName": "FeedTheCat",
+      "target": [
+        "web",
+        "cordova"
+      ],
+      "pwa": false,
+      "mobile": [
+        "android"
+      ],
+      "ui": "ionic",
+      "auth": true,
+      "angulartics": false,
+      "projectName": "cat-feeder",
+      "packageManager": "npm"
+    }
+  }
+}
