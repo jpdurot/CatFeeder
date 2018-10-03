@@ -39,7 +39,7 @@
 */Release/*
 
 # Node modules
-sources/mobile/node_modules/*
+sources/*/node_modules/*
 sources/mobile/www/build/
 sources/mobile/platforms/
 sources/mobile/plugins/

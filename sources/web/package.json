@@ -1,0 +1,14 @@
+{
+  "name": "catfeeder",
+  "version": "1.0.0",
+  "description": "Cat Feeder Web App",
+  "main": "index.js",
+  "scripts": {},
+  "author": "JP Durot",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "i2c": "^0.2.3"
+  }
+}
