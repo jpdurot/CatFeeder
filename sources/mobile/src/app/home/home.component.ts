@@ -23,6 +23,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   getInfosIntervalHandle: any;
   currentStatus: string;
 
+  private isAlertPresent:boolean;
+
   private status:Array<string> = [ "En attente", "", "", "En cours"];
 
 
@@ -36,10 +38,19 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getInfos();
-    this.getInfosIntervalHandle = setInterval(() => this.getInfos(), 1000);
+    this.startPollingInfos();
   }
 
   ngOnDestroy(): void {
+    this.stopPollingInfos();
+  }
+
+  startPollingInfos() {
+    this.stopPollingInfos
+    this.getInfosIntervalHandle = setInterval(() => this.getInfos(), 1000);
+  }
+
+  stopPollingInfos() {
     if (this.getInfosIntervalHandle) {
       clearInterval(this.getInfosIntervalHandle);
     }
@@ -51,7 +62,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(
         finalize(() => { this.isLoading = false; }))
       .subscribe((result: any) => { this.infos = result.infos; this.lastFeed = { date: result.lastFeed.date, quantity: result.lastFeed.quantity / 10}; this.currentStatus = this.status[this.infos.command] },
-                  (err: any) => this.showError(err));
+                  (err: any) => this.handleHttpError(err));
   }
 
   feed(): void {
@@ -60,7 +71,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(
         finalize(() => { this.isLoading = false; }))
       .subscribe((result: object) => { console.log('Feed OK') },
-                  (err) => this.showError(err));
+                  (err) => this.handleHttpError(err));
   }
 
   private createForm(): void {
@@ -69,13 +80,30 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  private showError(errorObject: object) {
-    const alert = this.alertController.create({
-      title: 'Error',
-      subTitle: JSON.stringify(errorObject),
-      buttons: ['OK']
-    });
-    alert.present();
+  private handleHttpError(error: any) {
+    if (error.status === 0) {
+      this.showError("Connexion impossible");
+    } else {
+      this.showError(JSON.stringify(error));
+    }
+  }
+
+  private showError(errorMessage: string) {
+    if (!this.isAlertPresent) {
+      const alert = this.alertController.create({
+        title: 'Error',
+        subTitle: errorMessage,
+        buttons: [
+          {
+          text: 'OK',
+          handler: () => { this.isAlertPresent = false; this.startPollingInfos(); }
+        }
+        ]
+      });
+      this.stopPollingInfos();
+      this.isAlertPresent = true;
+      alert.present();
+    }
   }
 
   private integerValidator(min: Number, max: Number): ValidatorFn {
