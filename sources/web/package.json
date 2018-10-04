@@ -7,6 +7,7 @@
   "author": "JP Durot",
   "license": "ISC",
   "dependencies": {
+    "@std/esm": "^0.26.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "i2c": "^0.2.3"

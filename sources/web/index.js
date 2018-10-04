@@ -1,8 +1,10 @@
+require = require('@std/esm')(module, { cjs: true, esm: 'js' });
+
 var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
 
-const catFeederFactory = require('./cat-feeder');
+var catFeederFactory=require('./cat-feeder').CatFeederFactory;
 
     console.log('Starting CatFeeder server application...');
     var cat = catFeederFactory.create();
@@ -33,7 +35,7 @@ const catFeederFactory = require('./cat-feeder');
     
     
     router.get('/', (req, res) => {
-        res.json({ message: 'hooray! welcome to our api!' });   
+        res.json({ message: 'Welcome to the Feed The Cat API !' });   
     });
     
     router.get('/command', (req, res) => {
