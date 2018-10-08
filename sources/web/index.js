@@ -77,7 +77,29 @@ var catFeederFactory=require('./cat-feeder').CatFeederFactory;
         cat.getLastFeed()
             .then(data => res.send(data))
             .catch(err => send(res, 500, err));
-    })
+    });
+    
+    router.post('/schedules', (req, res) => {
+       if (!req.body || req.body.constructor !== Array) {
+           res.sendStatus(400);
+       } else {
+           for (var i = 0; i < req.body.length; i++) {
+               if( ! ('hour' in req.body[i])
+                 || ! ('minute' in req.body[i])
+                 || ! ('quantity' in req.body[i])
+               ) {
+                   res.sendStatus(400);
+               }
+           }
+           cat.setSchedules(req.body)
+            .then(data => res.send(data))
+            .catch(err => send(res, 500, err));
+       } 
+    });
+    
+    router.get('/schedules/next', (req,res) => {
+       res.send(cat.getNextSchedule()); 
+    });
     
     
     

@@ -9,7 +9,10 @@
   "dependencies": {
     "@std/esm": "^0.26.0",
     "body-parser": "^1.18.3",
+    "cron-parser": "^2.6.0",
     "express": "^4.16.3",
-    "i2c": "^0.2.3"
+    "i2c": "^0.2.3",
+    "long-timeout": "^0.1.1",
+    "sorted-array-functions": "^1.2.0"
   }
 }

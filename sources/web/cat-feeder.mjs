@@ -1,5 +1,6 @@
 import {SettingsProvider} from './settings';
 import i2cbus from 'i2c';
+import {Scheduler} from './scheduler';
 
 export class CatFeederFactory {
     static create() {
@@ -20,6 +21,7 @@ class CatFeeder {
         this.lastFeed = null;
         this.serviceIntervalHandle = null;
         this.maxRegister = 7;
+        this.scheduler = new Scheduler();
     }
     
     // Public methods
@@ -107,8 +109,26 @@ class CatFeeder {
     }
     
     initFromSettings() {
-        console.log(this.settings.calibration);
         this.setCalibration(this.settings.calibration);
+    }
+    
+    setSchedules(sched) {
+        // TODO Check minute, hour and quantity values
+        this.scheduler.clearJobs();
+        for (var i = 0; i < sched.length; i++) {
+            const quantity = sched[i].quantity;
+            this.scheduler.addJob(
+                {
+                    hour: sched[i].hour,
+                    minute: sched[i].minute,
+                }, () => console.log("Must feed " + quantity + "g")
+            );
+        }
+        return Promise.resolve();
+    }
+    
+    getNextSchedule() {
+        return this.scheduler.getNextJobDate();
     }
     
     startService() {
@@ -116,7 +136,7 @@ class CatFeeder {
         
         this.initFromSettings();
         if (!this.serviceIntervalHandle) {
-            this.serviceIntervalHandle = setInterval(() => this.serviceLoop, 1000);
+            this.serviceIntervalHandle = setInterval(() => this.serviceLoop(), 1000);
         }
     }
     
