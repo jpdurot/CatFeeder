@@ -24,7 +24,7 @@ class Settings {
     loadSettings() {
         console.log("Loading settings...");
         try {
-            this.settings = fs.readFileSync(this.settings_file);
+            this.settings = JSON.parse(fs.readFileSync(this.settings_file));
             console.log("Settings loaded");
         }
         catch(error) {
