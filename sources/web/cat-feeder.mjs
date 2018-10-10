@@ -22,6 +22,7 @@ class CatFeeder {
         this.serviceIntervalHandle = null;
         this.maxRegister = 7;
         this.scheduler = new Scheduler();
+        this.schedules = [];
     }
     
     // Public methods
@@ -124,7 +125,12 @@ class CatFeeder {
                 }, () => console.log("Must feed " + quantity + "g")
             );
         }
+        this.schedules = sched;
         return Promise.resolve();
+    }
+    
+    getSchedules() {
+        return this.schedules;
     }
     
     getNextSchedule() {
