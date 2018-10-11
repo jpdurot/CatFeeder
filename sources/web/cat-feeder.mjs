@@ -1,6 +1,7 @@
 import {SettingsProvider} from './settings';
 import i2cbus from 'i2c';
 import {Scheduler} from './scheduler';
+import fs from 'fs';
 
 export class CatFeederFactory {
     static create() {
@@ -14,11 +15,12 @@ export class CatFeederFactory {
 class CatFeeder {
     
     constructor() {
+        this.feeds_file = __dirname + '/data_feeds.json';
         this.settings = new SettingsProvider().get();
         this.i2caddress = 0x20;
         this.i2c = new i2cbus(this.i2caddress, {device: '/dev/i2c-1'});
         this.lastInfos = {};
-        this.lastFeed = null;
+        this.lastFeeds = [];
         this.serviceIntervalHandle = null;
         this.maxRegister = 7;
         this.scheduler = new Scheduler();
@@ -73,7 +75,7 @@ class CatFeeder {
     }
     
     getInfos() {
-        return Promise.resolve({infos: this.lastInfos, lastFeed: this.lastFeed});
+        return Promise.resolve({infos: this.lastInfos, lastFeed: this.getLastFeed()});
     }
     
     getInfos_old() {
@@ -106,7 +108,7 @@ class CatFeeder {
     
     
     getLastFeed() {
-        return Promise.resolve(this.lastFeed ? this.lastFeed : {} );
+        return Promise.resolve(this.lastFeeds.length ? this.lastFeeds[0] : null );
     }
     
     initFromSettings() {
@@ -139,6 +141,7 @@ class CatFeeder {
     
     startService() {
         this.settings.loadSettings();
+        this.loadFeedsLog();
         
         this.initFromSettings();
         if (!this.serviceIntervalHandle) {
@@ -219,14 +222,37 @@ class CatFeeder {
         if (oldInfos.command === 3 && newInfos.command === 0) {
             console.log("Feeding is over...");
             
-            this.lastFeed = {
+            this.addFeedLog({
                 date: new Date().getTime(),
                 quantity: newInfos.weight
-            }
-            console.log(this.lastFeed);
+            });
+            console.log(this.lastFeeds[0]);
         } else if (oldInfos.command === 0 && newInfos.command === 3) {
             console.log("Feeding is starting...");
         }
+    }
+    
+    addFeedLog(feedLog) {
+        this.lastFeeds.unshift(feedLog);
+        this.saveFeedsLog();
+    }
+    
+    loadFeedsLog() {
+        console.log("Loading feeds...");
+        try {
+            this.lastFeeds = JSON.parse(fs.readFileSync(this.feeds_file));
+            console.log("Feeds loaded");
+        }
+        catch(error) {
+            console.log("Feeds cannot be loaded, initializing with empty value");
+            this.saveFeedsLog();
+        }
+    }
+    
+    saveFeedsLog() {
+        console.log("Saving feeds...");
+        fs.writeFileSync(this.feeds_file, JSON.stringify(this.lastFeeds), 'utf8');
+        console.log("Feeds saved !");
     }
     
     
