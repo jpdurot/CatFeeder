@@ -75,7 +75,11 @@ class CatFeeder {
     }
     
     getInfos() {
-        return Promise.resolve({infos: this.lastInfos, lastFeed: this.getLastFeed()});
+        var getInfosAsync = (resolve, reject) => {
+            this.getLastFeed()
+                .then(data => resolve({infos: this.lastInfos, lastFeed: data}))
+        }
+        return new Promise(getInfosAsync);
     }
     
     getInfos_old() {
