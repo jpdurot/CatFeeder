@@ -7,7 +7,8 @@ import { HttpClient } from "@angular/common/http";
 const routes = {
   calibration: '/api/calibration',
   feed: '/api/feed',
-  infos: '/api/infos'
+  infos: '/api/infos',
+  history: 'api/feed'
 };
 
 
@@ -50,6 +51,10 @@ export class FeederService {
         map((body: any) => body.calibration)
       );*/
   }
+
+  getHistory(): Observable<Object>{
+    return this.httpClient.get(routes.history);
+  } 
 
   
 

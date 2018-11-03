@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title><span translate>History</span></ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+    <ion-card *ngFor="let dayFeed of feedsHistory">
+      <ion-card-content>
+        <ion-card-title>{{dayFeed.date | date: 'EEEE dd MMMM'}}</ion-card-title>
+        <ion-item *ngFor="let feed of dayFeed.feeds">
+          <ion-label>{{feed.date | date: 'HH \'h\' mm'  }}</ion-label>
+          <ion-label class="quantityLabel">
+            <span>{{feed.quantity}}</span>
+            <span>&nbsp;g</span>
+          </ion-label>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+</ion-content>

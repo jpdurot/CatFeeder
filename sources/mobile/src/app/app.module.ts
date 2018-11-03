@@ -16,6 +16,7 @@ import { LoginModule } from './login/login.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SettingsModule } from './settings/settings.module';
+import { HistoryModule } from './history/history.module';
 
 @NgModule({
   imports: [
@@ -30,6 +31,7 @@ import { SettingsModule } from './settings/settings.module';
     AboutModule,
     LoginModule,
     SettingsModule,
+    HistoryModule,
     AppRoutingModule
   ],
   declarations: [AppComponent],
