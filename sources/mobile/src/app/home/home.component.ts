@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private isAlertPresent:boolean;
 
-  private status:Array<string> = [ "En attente", "", "", "En cours"];
+  private status:Array<string> = [ "Idle", "", "", "Feeding"];
 
 
 

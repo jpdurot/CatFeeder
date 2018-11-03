@@ -16,14 +16,14 @@
       </ion-card-title>
       <ion-list>
         <ion-item>
-          <span class="label" translate>Action en cours</span>
+          <span class="label" translate>Current action</span>
           <ion-note item-end translate [color]="currentStatus ? 'secondary' : ''"> 
             <span *ngIf="currentStatus" class="statusDescription" translate>{{currentStatus}}</span>
             <span *ngIf="!currentStatus" class="statusDescription empty" translate>---</span>
           </ion-note>
         </ion-item>
         <ion-item>
-          <span class="label" translate>Dernier miam</span>
+          <span class="label" translate>Last feed</span>
           <ion-note item-end color="secondary" translate>
             <p *ngIf="lastFeed" class="lastFeedDescription">{{lastFeed.quantity}} g</p>
             <p *ngIf="!lastFeed" class="lastFeedDescription">---</p>
