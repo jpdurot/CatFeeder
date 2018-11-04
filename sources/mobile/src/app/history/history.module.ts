@@ -5,6 +5,7 @@ import { HistoryRoutingModule } from './history-routing.module';
 import { CoreModule } from '@app/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicModule } from 'ionic-angular';
+import { SharedModule } from '@app/shared/shared.module';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { IonicModule } from 'ionic-angular';
     TranslateModule,
     CommonModule,
     IonicModule,
-    HistoryRoutingModule
+    HistoryRoutingModule,
+    SharedModule
   ],
   declarations: [HistoryComponent],
 })

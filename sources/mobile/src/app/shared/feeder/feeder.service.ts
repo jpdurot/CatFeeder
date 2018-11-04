@@ -8,7 +8,7 @@ const routes = {
   calibration: '/api/calibration',
   feed: '/api/feed',
   infos: '/api/infos',
-  history: 'api/feed'
+  history: '/api/feed'
 };
 
 

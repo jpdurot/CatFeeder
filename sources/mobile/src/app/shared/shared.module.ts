@@ -4,6 +4,7 @@ import { IonicModule } from 'ionic-angular';
 
 import { LoaderComponent } from './loader/loader.component';
 import { FeederService } from "@app/shared/feeder/feeder.service";
+import { DatePipeProxy } from '@app/shared/date/DatePipeProxy';
 
 @NgModule({
   imports: [
@@ -11,10 +12,12 @@ import { FeederService } from "@app/shared/feeder/feeder.service";
     CommonModule
   ],
   declarations: [
-    LoaderComponent
+    LoaderComponent,
+    DatePipeProxy
   ],
   exports: [
-    LoaderComponent
+    LoaderComponent,
+    DatePipeProxy
   ],
   providers: [
     FeederService

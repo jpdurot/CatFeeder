@@ -1,10 +1,11 @@
 @import "~theme/theme-variables.scss";
 
 ion-card-title {
-    font-size: 1.2em;
+    font-size: 1.1em;
     background: color($colors, primary);
     color: white;
     padding: 5px;
+    text-transform: capitalize;
 }
 
 ion-card-content{
@@ -24,9 +25,4 @@ ion-card-content{
             text-align: right;
         } 
     } 
-} 
-
-
-ion-card-title{
-    padding: 3px;
 } 

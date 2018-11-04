@@ -11,7 +11,7 @@ import { map } from 'lodash';
 })
 export class HistoryComponent implements OnInit {
 
-  private feedsHistory: Object;
+  feedsHistory: Object;
 
   constructor(private feederService: FeederService,
               private alertController: AlertController,
