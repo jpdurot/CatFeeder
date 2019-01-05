@@ -78,6 +78,12 @@ var catFeederFactory=require('./cat-feeder').CatFeederFactory;
             .then(data => res.send(data))
             .catch(err => send(res, 500, err));
     });
+    router.get('/feed', (req, res) => {
+        
+        res.send(cat.getFeeds());
+            //.then(data => res.send(data))
+            //.catch(err => send(res, 500, err));
+    });
     
     router.get('/schedules', (req, res) => {
         res.send(cat.getSchedules());

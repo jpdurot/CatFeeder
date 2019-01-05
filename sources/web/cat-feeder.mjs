@@ -2,6 +2,7 @@ import {SettingsProvider} from './settings';
 import i2cbus from 'i2c';
 import {Scheduler} from './scheduler';
 import fs from 'fs';
+import moment from 'moment-timezone';
 
 export class CatFeederFactory {
     static create() {
@@ -16,6 +17,7 @@ class CatFeeder {
     
     constructor() {
         this.feeds_file = __dirname + '/data_feeds.json';
+        this.feedsRetentionDays = 7;
         this.settings = new SettingsProvider().get();
         this.i2caddress = 0x20;
         this.i2c = new i2cbus(this.i2caddress, {device: '/dev/i2c-1'});
@@ -109,7 +111,20 @@ class CatFeeder {
         return new Promise(getInfosAsync);
     }
     
-    
+    getFeeds() {
+        var oldestTimestamp = moment().tz('Europe/Paris').subtract(this.feedsRetentionDays, 'days').startOf('day').unix() * 1000;
+        let i = 0;
+        let feeds = {};
+        while (i < this.lastFeeds.length && this.lastFeeds[i].date > oldestTimestamp) {
+            const baseDate = moment(this.lastFeeds[i].date).tz('Europe/Paris').startOf('day').unix() * 1000;
+            if (!feeds[baseDate]) {
+                feeds[baseDate] = [];
+            }
+            feeds[baseDate].push(this.lastFeeds[i]);
+            i++;
+        }
+        return feeds;
+    }
     
     getLastFeed() {
         return Promise.resolve(this.lastFeeds.length ? this.lastFeeds[0] : null );
